@@ -9,3 +9,5 @@ typings/
 node_modules/
 tsconfig.dev.json
 firebase-debug.log
+
+src/wasted-on-movies-firebase-adminsdk-ffli0-cd2bccd7be.json

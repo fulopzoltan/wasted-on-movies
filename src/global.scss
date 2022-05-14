@@ -1,0 +1,18 @@
+*{
+  font-family: 'Roboto', serif ;
+  font-size: 14px;
+  margin:0;
+  padding: 0;
+}
+html,body{
+  height: 100%;
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #ff4500;
+  }
+}
+#root,#app-container{
+  height: 100%;
+}
