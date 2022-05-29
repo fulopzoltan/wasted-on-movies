@@ -14,19 +14,16 @@ const useAuthService = () => {
         try {
             const firebaseResponse = await firebase.auth().signInWithEmailAndPassword(email, password);
             setLoading(false);
-            if (!firebaseResponse.user) {
-                throw 'User was not found';
-            }
             const idToken = await firebase.auth().currentUser?.getIdToken(true);
             setToken(idToken || '');
             setUser(firebaseResponse.user);
             setLoggedIn(true);
-        } catch (ex) {
+        } catch (ex: any) {
             setLoggedIn(false);
             setUser(null);
             setToken('');
             setLoading(false);
-            console.error(ex);
+            throw ex;
         }
     };
 
@@ -48,7 +45,7 @@ const useAuthService = () => {
                 setLoggedIn(false);
                 setUser(null);
                 setToken('');
-                console.error(error);
+                throw error;
             });
     };
 

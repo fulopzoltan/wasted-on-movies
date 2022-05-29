@@ -1,36 +1,50 @@
 import React, { useState } from 'react';
-import { LoginTitle, LoginWrapper } from './Login.css';
-import firebase from 'firebase/compat';
-import { useAuth } from '../../providers/AuthContext';
+import { LoginInfoText, LoginTitle, LoginWrapper } from './Login.css';
 
-import { WOMButton, WOMTextField } from '../CustomComponents/CustomComponents';
-import { Google } from '@mui/icons-material';
+import { useAuth } from '../../providers/AuthContext';
+import { WOMButton, WOMSnackbar, WOMTextField } from '../CustomComponents/CustomComponents';
 import { useLoading } from '../../providers/LoadingContext';
+import { ErrorKeys, errors } from '../../utils/errorMappings';
+import _ from 'lodash';
+import InlineSVG from 'react-inlinesvg';
+import { icons } from '../../assets/icons/icons';
+
+import { useNotification } from '../../providers/NotificationContext';
 
 const Login = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [formErrors, setFormErrors] = useState<{ email?: string; password?: string }>({});
+
+    const { setNotification } = useNotification();
+
     const { logUserIn, logUserInWithGoogle } = useAuth();
     const { setLoading } = useLoading();
 
     const login = async () => {
         try {
             setLoading(true);
-            await logUserIn(email, password);
-        } catch (ex) {
-            console.error(ex);
+            const loginResponse = await logUserIn(email, password);
+        } catch (ex: any) {
+            const errKey = errors[ex.code as ErrorKeys] ?? errors.unknown;
+            setNotification({ open: true, message: errKey, type: 'error' });
             setLoading(false);
         }
     };
-    const register = async () => {
-        try {
-            setLoading(true);
-            const firebaseResponse = await firebase.auth().createUserWithEmailAndPassword(email, password);
-        } catch (ex) {
-            setLoading(false);
-            console.error(ex);
+
+    const validateLogin = () => {
+        const newFormErrors = { ...formErrors };
+        if (!email) {
+            newFormErrors['email'] = 'Please provide and email!';
         }
+        if (!password) {
+            newFormErrors['password'] = 'Please provide a password!';
+        }
+
+        setFormErrors(newFormErrors);
+        return Object.keys(newFormErrors).length === 0;
     };
+
     return (
         <LoginWrapper>
             <LoginTitle>
@@ -38,37 +52,51 @@ const Login = () => {
                 <br />
                 <span>wasted-on-movies</span>
             </LoginTitle>
-            <WOMTextField type={'text'} label={'Email'} value={email} onChange={(evt) => setEmail(evt.target.value)} />
+            <WOMTextField
+                type={'text'}
+                label={'Email'}
+                value={email}
+                errorMessage={formErrors.email}
+                onChange={(evt) => {
+                    setFormErrors(_.omit(formErrors, 'email'));
+                    setEmail(evt.target.value);
+                }}
+            />
             <WOMTextField
                 type={'password'}
                 label={'Password'}
                 value={password}
-                onChange={(evt) => setPassword(evt.target.value)}
-            />
-            <WOMButton
-                kind={'PRIMARY'}
-                text={'Register'}
-                onClick={async () => {
-                    register();
-                    setLoading(false);
+                errorMessage={formErrors.password}
+                onChange={(evt) => {
+                    setFormErrors(_.omit(formErrors, 'password'));
+                    setPassword(evt.target.value);
                 }}
             />
-
             <WOMButton
                 kind={'PRIMARY'}
                 text={'LOGIN'}
                 onClick={() => {
+                    if (!validateLogin()) return;
                     login();
                 }}
             >
                 Login
             </WOMButton>
+            <LoginInfoText>
+                You do not have an account? <span>Click here to register</span> <br />
+                <h1>OR</h1>
+            </LoginInfoText>
+
             <WOMButton
                 kind={'DEFAULT'}
-                startIcon={<Google />}
+                startIcon={<InlineSVG src={icons.googleIcon} />}
                 text={'Log in with Google'}
-                onClick={() => {
-                    logUserInWithGoogle();
+                onClick={async () => {
+                    try {
+                        await logUserInWithGoogle();
+                    } catch (ex: any) {
+                        console.error(ex);
+                    }
                 }}
             />
         </LoginWrapper>

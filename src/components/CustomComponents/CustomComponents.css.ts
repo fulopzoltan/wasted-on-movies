@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Button, ButtonProps, TextField } from '@material-ui/core';
+import { Button, ButtonProps, Snackbar, TextField } from '@material-ui/core';
 import { ButtonColors, theme } from '../../utils/theme';
 interface IStyledButton {
     kind: ButtonColors;
@@ -36,4 +36,17 @@ export const StyledTextField = styled(TextField)`
             border-color: ${theme.text.main};
         }
     }
+`;
+
+export const StyledSnackbar = styled(Snackbar)``;
+
+export const ErrorMessage = styled.div`
+    font-size: 18px;
+    font-weight: bold;
+    color: ${theme.text.error};
+    padding: 12px;
+    text-align: center;
+    border: 2px solid ${theme.text.error};
+    border-radius: 4px;
+    background: ${theme.background.error};
 `;

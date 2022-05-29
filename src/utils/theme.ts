@@ -6,9 +6,11 @@ export const theme = {
     },
     text: {
         main: '#ff4500',
-        white: '#FEFEFE'
+        white: '#FEFEFE',
+        error: '#B00020'
     },
     background: {
-        main: '#000'
+        main: '#000',
+        error: '#CF6679'
     }
 };

@@ -21,3 +21,20 @@ export const LoginTitle = styled.div`
         color: ${theme.text.main};
     }
 `;
+
+export const LoginInfoText = styled.div`
+    text-align: center;
+    line-height: 30px;
+    color: ${theme.text.white};
+    span {
+        color: ${theme.text.main};
+        &:hover {
+            cursor: pointer;
+        }
+    }
+    h1 {
+        font-size: 18px;
+        font-weight: bold;
+        color: ${theme.text.main};
+    }
+`;
