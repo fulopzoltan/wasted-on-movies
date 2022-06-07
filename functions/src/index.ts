@@ -10,7 +10,6 @@ const fbApp = admin.initializeApp({
     credential: applicationDefault()
 });
 
-console.log(fbApp);
 const app = express();
 
 // CORS

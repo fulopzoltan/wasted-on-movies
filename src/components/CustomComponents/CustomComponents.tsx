@@ -20,6 +20,7 @@ export const WOMTextField: FC<{ errorMessage?: string } & TextFieldProps> = ({ e
             {...props}
             error={!!errorMessage}
             helperText={errorMessage ? `* ${errorMessage}` : ''}
+            size={'small'}
         />
     );
 };

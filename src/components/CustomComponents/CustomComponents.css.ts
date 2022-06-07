@@ -6,6 +6,7 @@ interface IStyledButton {
 }
 export const StyledButton = styled(Button).attrs(({ kind }: IStyledButton & ButtonProps) => ({ kind }))`
     &.MuiButton-root {
+        height: 34px;
         min-width: 120px;
     }
     &.MuiButton-contained {
@@ -16,11 +17,11 @@ export const StyledButton = styled(Button).attrs(({ kind }: IStyledButton & Butt
 
 export const StyledTextField = styled(TextField)`
     label {
-        font-size: 18px;
+        font-size: 15px;
         color: ${theme.text.white};
     }
     label.Mui-focused {
-        font-size: 18px;
+        font-size: 15px;
         color: ${theme.text.white};
     }
     .MuiOutlinedInput-root {
@@ -36,17 +37,13 @@ export const StyledTextField = styled(TextField)`
             border-color: ${theme.text.main};
         }
     }
+    .MuiInputAdornment-root {
+        svg {
+            path {
+                color: ${theme.text.white};
+            }
+        }
+    }
 `;
 
 export const StyledSnackbar = styled(Snackbar)``;
-
-export const ErrorMessage = styled.div`
-    font-size: 18px;
-    font-weight: bold;
-    color: ${theme.text.error};
-    padding: 12px;
-    text-align: center;
-    border: 2px solid ${theme.text.error};
-    border-radius: 4px;
-    background: ${theme.background.error};
-`;
