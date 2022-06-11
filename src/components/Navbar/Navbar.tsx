@@ -10,9 +10,6 @@ import { PersonPin } from '@material-ui/icons';
 const Navbar: FC<any> = (props) => {
     const { logUserOut, user } = useAuth();
     const history = useHistory();
-    const [activePath, setActivePath] = useState('');
-
-    useEffect(() => setActivePath(window.location.pathname), [window.location.pathname]);
 
     return (
         <NavbarWrapper>
@@ -20,7 +17,7 @@ const Navbar: FC<any> = (props) => {
                 wasted-on-<span>movies</span>
             </AppName>
             <MenuWrapper>
-                <NavLink to={'/dashboard'} activeClassName={'active'}>
+                <NavLink to={'/search'} activeClassName={'active'}>
                     Search
                 </NavLink>
                 <NavLink to={'/my_watchlist'} activeClassName={'active'}>
