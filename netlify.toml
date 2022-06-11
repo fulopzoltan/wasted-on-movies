@@ -4,5 +4,6 @@
   status = 200
 [build]
   base="/"
-  ignore = "git diff —quiet HEAD^ HEAD functions/"
+  ignore = "exit 1"
+  ignore = "exit 2"
 
