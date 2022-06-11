@@ -4,5 +4,5 @@
   status = 200
 [build]
   base="/"
-  ignore = "exit 1"
+  ignore = "exit 2"
 
