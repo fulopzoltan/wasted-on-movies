@@ -17,7 +17,7 @@ const Navbar: FC<any> = (props) => {
                 wasted-on-<span>movies</span>
             </AppName>
             <MenuWrapper>
-                <NavLink to={'/dashboard'} activeClassName={'active'}>
+                <NavLink to={'/search'} activeClassName={'active'}>
                     Search
                 </NavLink>
                 <NavLink to={'/my_watchlist'} activeClassName={'active'}>

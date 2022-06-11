@@ -11,7 +11,7 @@ export async function checkAuth(req: Request | any, res: Response, next: NextFun
     const idToken = authHeader.startsWith('Bearer ') ? authHeader.split('Bearer ')[1] : authHeader;
     try {
         const decodedToken = await admin.auth().verifyIdToken(idToken);
-        console.log(decodedToken);
+        return decodedToken;
     } catch (err) {
         res.send(401).send({ message: 'Unauthorized' });
         return;

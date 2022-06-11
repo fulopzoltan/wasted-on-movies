@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { LoginInfoText, LoginTitle, LoginWrapper } from './Login.css';
-
 import { useAuth } from '../../providers/AuthContext';
 import { WOMButton, WOMSnackbar, WOMTextField } from '../CustomComponents/CustomComponents';
 import { useLoading } from '../../providers/LoadingContext';
@@ -8,8 +7,9 @@ import { ErrorKeys, errors } from '../../utils/errorMappings';
 import _ from 'lodash';
 import InlineSVG from 'react-inlinesvg';
 import { icons } from '../../assets/icons/icons';
-
+import { getAuth, fetchSignInMethodsForEmail } from 'firebase/auth';
 import { useNotification } from '../../providers/NotificationContext';
+import { useHistory } from 'react-router-dom';
 
 const Login = () => {
     const [email, setEmail] = useState<string>('');
@@ -20,7 +20,7 @@ const Login = () => {
 
     const { logUserIn, logUserInWithGoogle } = useAuth();
     const { setLoading } = useLoading();
-
+    const history = useHistory();
     const login = async () => {
         try {
             setLoading(true);
@@ -31,6 +31,20 @@ const Login = () => {
             setLoading(false);
         }
     };
+    const checkProviderInUse = () => {
+        const auth = getAuth();
+        return fetchSignInMethodsForEmail(auth, email).then((providers) => {
+            if (providers.includes('google.com')) {
+                setNotification({
+                    open: true,
+                    message: 'The provided email uses GoogleAuth! Please Log In With Google!',
+                    type: 'error'
+                });
+                return false;
+            }
+            return true;
+        });
+    };
 
     const validateLogin = () => {
         const newFormErrors = { ...formErrors };
@@ -40,7 +54,6 @@ const Login = () => {
         if (!password) {
             newFormErrors['password'] = 'Please provide a password!';
         }
-
         setFormErrors(newFormErrors);
         return Object.keys(newFormErrors).length === 0;
     };
@@ -75,15 +88,17 @@ const Login = () => {
             <WOMButton
                 kind={'PRIMARY'}
                 text={'LOGIN'}
-                onClick={() => {
+                onClick={async () => {
                     if (!validateLogin()) return;
+                    if (!(await checkProviderInUse())) return;
                     login();
                 }}
             >
                 Login
             </WOMButton>
             <LoginInfoText>
-                You do not have an account? <span>Click here to register</span> <br />
+                You do not have an account?{' '}
+                <span onClick={() => history.push('/register')}>Click here to register</span> <br />
                 <h1>OR</h1>
             </LoginInfoText>
 

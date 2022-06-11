@@ -4,14 +4,15 @@ import {
     AssetName,
     AssetOverview,
     AssetRuntime,
-    DashboardWrapper,
+    SearchPageWrapper,
     DetailViewWrapper,
     GenreWrapper,
     LeftSection,
     NoResult,
     RightSection,
-    SearchResultWrapper
-} from './Dashboard.css';
+    SearchResultWrapper,
+    SearchFieldWrapper
+} from './SearchPage.css';
 import { IconButton, InputAdornment } from '@material-ui/core';
 import { WOMButton, WOMTextField } from '../CustomComponents/CustomComponents';
 import TheTVDBApi from '../../api/TheTVDBApi';
@@ -21,9 +22,9 @@ import { AddTask, Search } from '@mui/icons-material';
 import { ArrowBackIos } from '@material-ui/icons';
 import { theme } from '../../utils/theme';
 
-const Dashboard = () => {
+const SearchPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchResult, setSearchResult] = useState<any>([]);
+    const [searchResult, setSearchResult] = useState<any | null>(null);
     const [assetToLoad, setAssetToLoad] = useState<{ type?: 'movie' | 'series'; id?: string }>({});
     const [assetToView, setAssetToView] = useState<any>(null);
     const { setLoading, loading } = useLoading();
@@ -63,24 +64,27 @@ const Dashboard = () => {
     const renderSearchView = () => {
         return (
             <>
-                <WOMTextField
-                    value={searchTerm}
-                    onChange={(evt) => setSearchTerm(evt.target.value)}
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position={'end'}>
-                                <IconButton onClick={() => search()}>
-                                    <Search />
-                                </IconButton>
-                            </InputAdornment>
-                        )
-                    }}
-                    placeholder={'Search for movies/series...'}
-                    onKeyUp={({ key }) => key === 'Enter' && search()}
-                />
+                <SearchFieldWrapper noSearch={searchResult === null}>
+                    <WOMTextField
+                        value={searchTerm}
+                        onChange={(evt) => setSearchTerm(evt.target.value)}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position={'end'}>
+                                    <IconButton onClick={() => search()}>
+                                        <Search />
+                                    </IconButton>
+                                </InputAdornment>
+                            )
+                        }}
+                        placeholder={'Search for movies/series...'}
+                        onKeyUp={({ key }) => key === 'Enter' && search()}
+                    />
+                </SearchFieldWrapper>
+
                 <SearchResultWrapper>
-                    {searchResult.length === 0 && <NoResult>No search result..</NoResult>}
-                    {searchResult.map((content: any) => (
+                    {searchResult?.length === 0 && <NoResult>No search result..</NoResult>}
+                    {searchResult?.map((content: any) => (
                         <ContentCard
                             key={content.objectID}
                             objectID={content.objectID}
@@ -143,11 +147,11 @@ const Dashboard = () => {
     };
 
     return (
-        <DashboardWrapper>
+        <SearchPageWrapper>
             {view === 'SEARCH' && renderSearchView()}
             {view === 'DETAIL' && renderDetailView()}
-        </DashboardWrapper>
+        </SearchPageWrapper>
     );
 };
 
-export default Dashboard;
+export default SearchPage;

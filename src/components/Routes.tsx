@@ -2,8 +2,10 @@ import { useAuth } from '../providers/AuthContext';
 import React, { FC } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import Login from './Login/Login';
-import Dashboard from './Dashboard/Dashboard';
+import SearchPage from './Dashboard/SearchPage';
 import Navbar from './Navbar/Navbar';
+import Register from './Register/Register';
+import NotFound from './NotFound/NotFound';
 
 interface IPrivateRoute {
     component: any;
@@ -36,13 +38,16 @@ const Routes = () => {
             {loggedIn && token && <Navbar />}
             <Switch>
                 <Route exact path="/">
-                    <Redirect to="/dashboard" />
+                    <Redirect to="/search" />
                 </Route>
                 <Route exact path="/login">
                     {!loggedIn || !token ? <Login /> : <Redirect to="/" />}
                 </Route>
-                <PrivateRoute component={Dashboard} exact path={'/dashboard'} />
-                <Route component={() => <div>Not Found</div>} />
+                <Route exact path="/register">
+                    {!loggedIn || !token ? <Register /> : <Redirect to="/" />}
+                </Route>
+                <PrivateRoute component={SearchPage} exact path={'/search'} />
+                <Route component={NotFound} />
             </Switch>
         </>
     );

@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { theme } from '../../utils/theme';
 import { IconButton } from '@mui/material';
 
-export const DashboardWrapper = styled.div`
+export const SearchPageWrapper = styled.div`
     min-height: calc(100vh - 130px);
     background: ${theme.background.main};
     color: ${theme.text.white};
@@ -10,6 +10,7 @@ export const DashboardWrapper = styled.div`
     display: flex;
     gap: 20px;
     flex-direction: column;
+    position: relative;
 `;
 
 export const SearchResultWrapper = styled.div`
@@ -17,6 +18,19 @@ export const SearchResultWrapper = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
+`;
+
+export const SearchFieldWrapper = styled.div<{ noSearch?: boolean }>`
+    transition: all linear 300ms;
+    ${({ noSearch }) =>
+        noSearch
+            ? css`
+                  position: absolute;
+                  transform: translate(-50%);
+                  margin-left: 50%;
+                  top: 50%;
+              `
+            : ''}
 `;
 
 export const NoResult = styled.div`
