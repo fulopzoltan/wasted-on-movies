@@ -44,7 +44,7 @@ const Register = () => {
     const validateRegister = () => {
         const newFormErrors = { ...formErrors };
         if (!email) {
-            newFormErrors['email'] = 'Please provide and email!';
+            newFormErrors['email'] = 'Please provide an email!';
         }
         if (!password) {
             newFormErrors['password'] = 'This field is required!';

@@ -11,6 +11,7 @@ export const theme = {
     },
     background: {
         main: '#121212',
+        secondary: '#202124',
         error: '#CF6679'
     }
 };
