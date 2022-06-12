@@ -8,7 +8,7 @@ class FirebaseAPI {
     private baseURL: string;
 
     constructor() {
-        this.baseURL = 'http://localhost:5001/wasted-on-movies/europe-west3/api' || FIREBASE_FUNC_BASE_URL || '';
+        this.baseURL = FIREBASE_FUNC_BASE_URL || '';
         this.client = this.createAxiosClient();
     }
     private createAxiosClient(): AxiosInstance {
