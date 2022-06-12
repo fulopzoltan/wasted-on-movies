@@ -30,7 +30,7 @@ export const DisplayName = styled.div`
     border-radius: 4px;
     margin-left: auto;
     font-size: 14px;
-    color: ${theme.text.main};
+    color: ${theme.text.white};
 `;
 
 export const AppName = styled.div`

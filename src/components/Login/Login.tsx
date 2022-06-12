@@ -49,7 +49,7 @@ const Login = () => {
     const validateLogin = () => {
         const newFormErrors = { ...formErrors };
         if (!email) {
-            newFormErrors['email'] = 'Please provide and email!';
+            newFormErrors['email'] = 'Please provide an email!';
         }
         if (!password) {
             newFormErrors['password'] = 'Please provide a password!';
@@ -65,6 +65,19 @@ const Login = () => {
                 <br />
                 <span>wasted-on-movies</span>
             </LoginTitle>
+            <WOMButton
+                kind={'DEFAULT'}
+                startIcon={<InlineSVG src={icons.googleIcon} />}
+                text={'Log in with Google'}
+                onClick={async () => {
+                    try {
+                        await logUserInWithGoogle();
+                    } catch (ex: any) {
+                        console.error(ex);
+                    }
+                }}
+            />
+            <hr />
             <WOMTextField
                 type={'text'}
                 label={'Email'}
@@ -99,21 +112,8 @@ const Login = () => {
             <LoginInfoText>
                 You do not have an account?{' '}
                 <span onClick={() => history.push('/register')}>Click here to register</span> <br />
-                <h1>OR</h1>
+                <span onClick={() => history.push('/reset_password')}>Forgot Password?</span>
             </LoginInfoText>
-
-            <WOMButton
-                kind={'DEFAULT'}
-                startIcon={<InlineSVG src={icons.googleIcon} />}
-                text={'Log in with Google'}
-                onClick={async () => {
-                    try {
-                        await logUserInWithGoogle();
-                    } catch (ex: any) {
-                        console.error(ex);
-                    }
-                }}
-            />
         </LoginWrapper>
     );
 };
