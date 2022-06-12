@@ -1,21 +1,14 @@
 import styled from 'styled-components';
 import { theme } from '../../utils/theme';
 
-export const LoginWrapper = styled.div`
+export const ResetPasswordWrapper = styled.div`
     background-color: ${theme.background.main};
     display: flex;
     gap: 20px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    hr {
-        border: none;
-        width: 500px;
-        background-color: white;
-        opacity: 0.2;
-        height: 1px;
-    }
+    min-height: 100%;
 `;
 
 export const LoginTitle = styled.div`

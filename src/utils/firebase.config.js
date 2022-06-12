@@ -7,3 +7,5 @@ export const firebaseConfig = {
     appId: process.env.REACT_APP_APP_ID,
     measurementId: process.env.REACT_APP_MEASUREMENT_ID
 };
+
+export const FIREBASE_FUNC_BASE_URL = process.env.REACT_APP_FIREBASE_FUNCTIONS_BASE_URL;

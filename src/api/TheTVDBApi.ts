@@ -65,6 +65,19 @@ class TheTVDBApi {
         });
     }
 
+    async getSeasonById(seasonId: string) {
+        return new Promise<TVDBApiResponse>((resolve, reject) => {
+            this.client
+                .get(`/seasons/${seasonId}/extended`)
+                .then((result: AxiosResponse<TVDBApiResponse | any>) => {
+                    return resolve(result.data);
+                })
+                .catch((e) => {
+                    return reject(e);
+                });
+        });
+    }
+
     private filterSearchData(data: any[]) {
         return data.filter((entry) => ['movie', 'series'].includes(entry.type));
     }

@@ -8,9 +8,12 @@ html,body{
   height: 100%;
   &::-webkit-scrollbar {
     width: 6px;
+    background: #121212;
+
   }
   &::-webkit-scrollbar-thumb {
     background-color: #E50914;
+    border-radius: 3px;
   }
 }
 #root,#app-container{

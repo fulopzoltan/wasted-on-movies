@@ -52,7 +52,23 @@ export const DetailViewWrapper = styled.div`
         gap: 12px;
     }
 `;
+export const SeasonsWrapper = styled.div`
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-left: 30px;
+`;
 
+export const SeasonCard = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    div {
+        text-align: center;
+    }
+`;
 export const LeftSection = styled.div``;
 export const RightSection = styled.div`
     display: flex;
