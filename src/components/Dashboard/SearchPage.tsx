@@ -127,7 +127,7 @@ const SearchPage = () => {
             overview:
                 assetToView.overview ||
                 assetToView?.translations?.overviewTranslations?.find((o: any) => o.language === 'eng').overview ||
-                '[no-data]',
+                '[no-overview]',
             type: assetToLoad.type,
             image: assetToView.image,
             genres: assetToView.genres,
@@ -147,7 +147,7 @@ const SearchPage = () => {
                     overview:
                         episode.overview ||
                         episode?.translations?.overviewTranslations?.find((o: any) => o.language === 'eng').overview ||
-                        '[no-data]',
+                        '[no-overview]',
                     number: episode.number,
                     image: episode.image,
                     runtime: episode.runtime,

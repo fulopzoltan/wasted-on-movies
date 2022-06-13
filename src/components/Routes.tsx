@@ -8,7 +8,8 @@ import Register from './Register/Register';
 import NotFound from './NotFound/NotFound';
 import ResetPassword from './ResetPassword/ResetPassword';
 import Watchlist from './Watchlist/Watchlist';
-import firebase from 'firebase/compat';
+import jwtDecode from 'jwt-decode';
+import { useNotification } from '../providers/NotificationContext';
 
 interface IPrivateRoute {
     component: any;
@@ -18,8 +19,9 @@ interface IPrivateRoute {
 
 const PrivateRoute: FC<IPrivateRoute> = ({ component: Component, path, ...rest }) => {
     const { loggedIn, token, setToken, logUserOut } = useAuth();
+    const { setNotification } = useNotification();
     useEffect(() => {
-        refreshIdToken();
+        checkIdToken();
     }, []);
     const isAuthenticated = () => {
         if (!loggedIn || !token) {
@@ -28,14 +30,12 @@ const PrivateRoute: FC<IPrivateRoute> = ({ component: Component, path, ...rest }
         }
         return true;
     };
-    const refreshIdToken = async () => {
-        try {
-            const idToken = (await firebase.auth().currentUser?.getIdToken(true)) || '';
-            if (!idToken) return logUserOut();
-            setToken(idToken);
-        } catch (ex) {
-            console.error(ex);
-            return logUserOut();
+    const checkIdToken = async () => {
+        if (!token) return;
+        const decoded: any = jwtDecode(token);
+        if (Math.floor(Date.now() / 1000) >= decoded?.exp) {
+            setNotification({ open: true, type: 'info', message: 'Your session expired! Please log in again!' });
+            logUserOut();
         }
     };
     return (

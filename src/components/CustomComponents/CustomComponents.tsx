@@ -1,10 +1,17 @@
 import React, { FC, useEffect, useState } from 'react';
-import { StyledButton, StyledSnackbar, StyledTextField } from './CustomComponents.css';
+import {
+    StyledButton,
+    StyledCheckbox,
+    StyledCheckboxWrapper,
+    StyledSelectWrapper,
+    StyledSnackbar,
+    StyledTextField
+} from './CustomComponents.css';
 import { ButtonColors } from '../../utils/theme';
-import { ButtonProps, TextFieldProps } from '@material-ui/core';
+import { ButtonProps, CheckboxProps, TextFieldProps } from '@material-ui/core';
 import { SnackbarProps } from '@mui/material/Snackbar/Snackbar';
 import { Alert, Slide, Snackbar } from '@mui/material';
-
+import Select, { Props } from 'react-select';
 export const WOMButton: FC<{ kind: ButtonColors; text: string } & ButtonProps> = ({ kind, text, ...props }) => {
     return (
         <StyledButton variant={'contained'} kind={kind} {...props}>
@@ -22,6 +29,23 @@ export const WOMTextField: FC<{ errorMessage?: string } & TextFieldProps> = ({ e
             helperText={errorMessage ? `* ${errorMessage}` : ''}
             size={'small'}
         />
+    );
+};
+
+export const WOMSelect: FC<Props> = ({ ...props }) => {
+    return (
+        <StyledSelectWrapper>
+            <Select classNamePrefix="wom-select" {...props} />
+        </StyledSelectWrapper>
+    );
+};
+
+export const WOMCheckbox: FC<{ label?: string } & CheckboxProps> = ({ label, ...props }) => {
+    return (
+        <StyledCheckboxWrapper>
+            <StyledCheckbox {...props} />
+            {label}
+        </StyledCheckboxWrapper>
     );
 };
 
