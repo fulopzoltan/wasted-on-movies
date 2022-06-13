@@ -1,5 +1,17 @@
-import React, { FC, useState } from 'react';
-import { ExpandedContainer, ExpandIconHolder, ItemTopSection, WatchlistItemWrapper } from './Watchlist.css';
+import React, { FC, useEffect, useState } from 'react';
+import {
+    RuntimeActionHolder,
+    EpisodeContainer,
+    EpisodeInfo,
+    EpisodeName,
+    EpisodeOverview,
+    ExpandedContainer,
+    ExpandIconHolder,
+    ItemTopSection,
+    SeasonContainer,
+    SeasonSelectHolder,
+    WatchlistItemWrapper
+} from './Watchlist.css';
 import { AssetEntry } from '../../types/AssetEntry';
 import { ExpandLess, ExpandMore, RemoveCircle } from '@material-ui/icons';
 import {
@@ -10,21 +22,77 @@ import {
     GenreWrapper,
     RightSection
 } from '../Dashboard/SearchPage.css';
-import { WOMButton } from '../CustomComponents/CustomComponents';
+import { WOMButton, WOMCheckbox, WOMSelect } from '../CustomComponents/CustomComponents';
 import { useConfirm } from 'material-ui-confirm';
 import { useLoading } from '../../providers/LoadingContext';
 import FirebaseAPI from '../../utils/FirebaseAPI';
 import { useAuth } from '../../providers/AuthContext';
 import { useNotification } from '../../providers/NotificationContext';
+import _ from 'lodash';
 
-const WatchlistItem: FC<{ entry: AssetEntry }> = ({ entry }) => {
-    const [assetEntry, setAssetEntry] = useState<AssetEntry>(entry);
-    const [expanded, setExpanded] = useState(false);
-    const [hoveringItem, setHoveringItem] = useState(false);
+const WatchlistItem: FC<{
+    entry: AssetEntry;
+    expanded: boolean;
+    onSave: () => void;
+    onExpand: () => void;
+    onDelete: () => void;
+}> = ({ entry, expanded, onExpand, onSave, onDelete }) => {
+    const [assetEntry, setAssetEntry] = useState<AssetEntry>();
+    const [seasonOptions, setSeasonOptions] = useState<any>([]);
+    const [selectedSeason, setSelectedSeason] = useState<any>({});
     const confirm = useConfirm();
     const { setLoading } = useLoading();
     const { token } = useAuth();
     const { setNotification } = useNotification();
+
+    // Returns false if there are unsaved changes
+    const checkUnsaved = () => {
+        return _.isEqual(assetEntry, entry);
+    };
+    const handleEpisodeCheck = (seasonNumber: number, episodeId: number) => {
+        const newEntry = { ...assetEntry };
+        const season = newEntry.seasons.find((season: any) => season.number === seasonNumber);
+        const episode = season.episodes.find((episode: any) => episode.id === episodeId);
+        episode.watched = !episode.watched;
+        //if all episodes check, check season
+        const seasonCheck = season.episodes.every((episode: any) => episode.watched);
+        season.watched = seasonCheck;
+        setAssetEntry(newEntry);
+    };
+    const handleSeasonCheck = (seasonNumber: number) => {
+        const newEntry = { ...assetEntry };
+        const season = newEntry.seasons.find((season: any) => season.number === seasonNumber);
+        season.watched = !season.watched;
+        season.episodes.forEach((episode: any) => (episode.watched = season.watched));
+        const entryCheck = newEntry.seasons.every((season: any) => season.watched);
+        newEntry.watched = entryCheck;
+        setAssetEntry(newEntry);
+    };
+
+    const handleEntryCheck = () => {
+        const newEntry = { ...assetEntry };
+        newEntry.watched = !newEntry.watched;
+        if (newEntry.type === 'series') {
+            newEntry.seasons.forEach((season: any) => {
+                season.watched = newEntry.watched;
+                season.episodes.forEach((episode: any) => (episode.watched = newEntry.watched));
+            });
+            const entryCheck = newEntry.seasons.every((season: any) => season.watched);
+            newEntry.watched = entryCheck;
+        }
+        setAssetEntry(newEntry);
+    };
+
+    useEffect(() => {
+        setAssetEntry(_.cloneDeep(entry));
+        const options =
+            entry.seasons?.map((season: any) => ({
+                label: `Season ${season.number}`,
+                value: season.number
+            })) || [];
+        setSeasonOptions(options);
+        setSelectedSeason(options[0]);
+    }, [entry]);
 
     const handleRemoveClick = () => {
         confirm({
@@ -41,6 +109,7 @@ const WatchlistItem: FC<{ entry: AssetEntry }> = ({ entry }) => {
                         message: `${entry.name} was successfully removed from your watchlist!`
                     });
                     setLoading(false);
+                    onDelete();
                 } catch (ex) {
                     console.error(ex);
                     setLoading(false);
@@ -50,18 +119,71 @@ const WatchlistItem: FC<{ entry: AssetEntry }> = ({ entry }) => {
                 /* ... */
             });
     };
+    const handleSaveClick = async () => {
+        try {
+            setLoading(true);
+            const response = await FirebaseAPI.updateWatchlistEntry(token, assetEntry);
+            setLoading(false);
+            onSave();
+        } catch (ex) {
+            setLoading(false);
+            setNotification({ open: true, type: 'error', message: 'Update failed!' });
+        }
+    };
 
+    const renderSelectedSeason = () => {
+        if (assetEntry.type === 'movie') return;
+        const season = assetEntry.seasons.find((season: any) => season.number === selectedSeason?.value);
+        if (!season) return;
+        return season.episodes.map((episode: any) => (
+            <EpisodeContainer key={episode.id}>
+                <img src={episode.image} width={166} height={110} />
+                <EpisodeInfo>
+                    <EpisodeName>{episode.name}</EpisodeName>
+                    <EpisodeOverview>{episode.overview}</EpisodeOverview>
+                    <RuntimeActionHolder>
+                        <AssetRuntime>{`${episode.runtime} min`}</AssetRuntime>
+                        <WOMCheckbox
+                            checked={episode.watched}
+                            onClick={() => handleEpisodeCheck(selectedSeason.value, episode.id)}
+                            label={'Watched'}
+                        />
+                    </RuntimeActionHolder>
+                </EpisodeInfo>
+            </EpisodeContainer>
+        ));
+    };
+    const isSeasonWatched = () => {
+        if (assetEntry.type === 'movie') return;
+        const season = assetEntry.seasons.find((season: any) => season.number === selectedSeason?.value);
+        return season.watched;
+    };
+    if (!assetEntry) return null;
     return (
-        <WatchlistItemWrapper
-            expanded={expanded}
-            onMouseEnter={() => setHoveringItem(true)}
-            onMouseLeave={() => setHoveringItem(false)}
-        >
-            {/*{hoveringItem && entry.type === 'series' && (*/}
-            {/*    <ExpandIconHolder onClick={() => setExpanded(!expanded)}>*/}
-            {/*        {expanded ? <ExpandLess /> : <ExpandMore />}*/}
-            {/*    </ExpandIconHolder>*/}
-            {/*)}*/}
+        <WatchlistItemWrapper expanded={expanded}>
+            <ExpandIconHolder
+                onClick={() => {
+                    if (entry.type === 'movie') return;
+                    onExpand();
+                }}
+            >
+                {!checkUnsaved() && (
+                    <WOMButton kind={'PRIMARY'} text={'Save changes'} onClick={() => handleSaveClick()} />
+                )}
+                {entry.type === 'series' &&
+                    (expanded ? (
+                        <>
+                            Collapse
+                            <ExpandLess />
+                        </>
+                    ) : (
+                        <>
+                            Expand
+                            <ExpandMore />
+                        </>
+                    ))}
+            </ExpandIconHolder>
+
             <ItemTopSection>
                 <img src={assetEntry.image} width={220} height={336} />
                 <RightSection>
@@ -72,11 +194,18 @@ const WatchlistItem: FC<{ entry: AssetEntry }> = ({ entry }) => {
                             <AssetGenre key={`genre_${index}`}>{g.name}</AssetGenre>
                         ))}
                     </GenreWrapper>
+                    <RuntimeActionHolder>
+                        <AssetRuntime>
+                            {assetEntry.averageRuntime ? 'AVG. ' : ''}
+                            {assetEntry.runtime || assetEntry.averageRuntime} MIN
+                        </AssetRuntime>
+                        <WOMCheckbox
+                            label={`${_.upperFirst(assetEntry.type)} Watched`}
+                            checked={assetEntry.watched}
+                            onClick={() => handleEntryCheck()}
+                        />
+                    </RuntimeActionHolder>
 
-                    <AssetRuntime>
-                        {assetEntry.averageRuntime ? 'AVG. ' : ''}
-                        {assetEntry.runtime || assetEntry.averageRuntime} MIN
-                    </AssetRuntime>
                     <WOMButton
                         kind={'PRIMARY'}
                         text={'Remove from watchlist'}
@@ -87,7 +216,23 @@ const WatchlistItem: FC<{ entry: AssetEntry }> = ({ entry }) => {
                     />
                 </RightSection>
             </ItemTopSection>
-            <ExpandedContainer expanded={expanded} />
+            {expanded && (
+                <ExpandedContainer expanded={expanded}>
+                    <SeasonSelectHolder>
+                        <WOMSelect
+                            value={selectedSeason}
+                            options={seasonOptions}
+                            onChange={(newOption) => setSelectedSeason(newOption)}
+                        />
+                        <WOMCheckbox
+                            label={'Season Watched'}
+                            checked={isSeasonWatched()}
+                            onClick={() => handleSeasonCheck(selectedSeason.value)}
+                        />
+                    </SeasonSelectHolder>
+                    <SeasonContainer>{renderSelectedSeason()}</SeasonContainer>
+                </ExpandedContainer>
+            )}
         </WatchlistItemWrapper>
     );
 };
