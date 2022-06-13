@@ -11,6 +11,12 @@ export const WatchlistWrapper = styled.div`
     padding: 30px;
     background-color: ${theme.background.main};
 `;
+
+export const Watchtime = styled.div`
+    font-size: 30px;
+    text-align: center;
+    color: ${theme.text.main};
+`;
 export const NoWatchlistEntry = styled.div`
     text-align: center;
     padding: 40px;
@@ -31,6 +37,12 @@ export const ExpandIconHolder = styled.div`
     position: absolute;
     top: 20px;
     right: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    font-size: 16px;
+    color: ${theme.text.white};
     .MuiSvgIcon-root {
         width: 40px;
         height: 40px;
@@ -41,7 +53,6 @@ export const WatchlistItemWrapper = styled.div<{ expanded?: boolean }>`
     background-color: ${theme.background.secondary};
     border-radius: 6px;
     box-sizing: border-box;
-    overflow: hidden;
     position: relative;
     height: ${({ expanded }) => (expanded ? 'fit-content' : '333px')};
     box-shadow: 0 10px 20px 0 #000000;
@@ -63,5 +74,53 @@ export const ItemTopSection = styled.div`
 `;
 export const ExpandedContainer = styled.div<{ expanded: boolean }>`
     height: ${({ expanded }) => (expanded ? 'fit-content' : '0')};
-    transition: height linear 300ms;
+    transition: all linear 300ms;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+`;
+
+export const SeasonSelectHolder = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 30px;
+`;
+
+export const SeasonContainer = styled.div`
+    color: ${theme.text.white};
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+`;
+export const EpisodeContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+`;
+export const EpisodeInfo = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+`;
+export const EpisodeName = styled.div`
+    font-size: 16px;
+    font-weight: bold;
+`;
+
+export const RuntimeActionHolder = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+`;
+export const EpisodeOverview = styled.div`
+    font-size: 12px;
+    max-width: 50%;
+    height: 50px;
+    overflow: auto;
+    &::-webkit-scrollbar {
+        display: none;
+    }
 `;

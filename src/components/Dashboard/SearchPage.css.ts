@@ -90,6 +90,7 @@ export const AssetRuntime = styled.div`
     color: ${theme.text.white};
     background-color: ${theme.text.main};
     width: fit-content;
+    height: fit-content;
     padding: 6px 8px;
     border-radius: 10px;
 `;
@@ -108,4 +109,3 @@ export const AssetGenre = styled.div`
     padding: 6px 8px;
     border-radius: 10px;
 `;
-// export const AssetName = styled.div``;
