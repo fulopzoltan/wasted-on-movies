@@ -10,6 +10,7 @@ import ResetPassword from './ResetPassword/ResetPassword';
 import Watchlist from './Watchlist/Watchlist';
 import jwtDecode from 'jwt-decode';
 import { useNotification } from '../providers/NotificationContext';
+import Analytics from './Analytics/Analytics';
 
 interface IPrivateRoute {
     component: any;
@@ -66,6 +67,7 @@ const Routes = () => {
                 </Route>
                 <PrivateRoute component={SearchPage} exact path={'/search'} />
                 <PrivateRoute component={Watchlist} exact path={'/my_watchlist'} />
+                <PrivateRoute component={Analytics} exact path={'/analytics'} />
                 <Route component={NotFound} />
             </Switch>
         </>

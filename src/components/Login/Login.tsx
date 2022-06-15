@@ -33,17 +33,22 @@ const Login = () => {
     };
     const checkProviderInUse = () => {
         const auth = getAuth();
-        return fetchSignInMethodsForEmail(auth, email).then((providers) => {
-            if (providers.includes('google.com')) {
-                setNotification({
-                    open: true,
-                    message: 'The provided email uses GoogleAuth! Please Log In With Google!',
-                    type: 'error'
-                });
-                return false;
-            }
-            return true;
-        });
+        return fetchSignInMethodsForEmail(auth, email)
+            .then((providers) => {
+                if (providers.includes('google.com')) {
+                    setNotification({
+                        open: true,
+                        message: 'The provided email uses GoogleAuth! Please Log In With Google!',
+                        type: 'error'
+                    });
+                    return false;
+                }
+                return true;
+            })
+            .catch((ex: any) => {
+                const errKey = errors[ex.code as ErrorKeys] ?? errors.unknown;
+                setNotification({ open: true, message: errKey, type: 'error' });
+            });
     };
 
     const validateLogin = () => {

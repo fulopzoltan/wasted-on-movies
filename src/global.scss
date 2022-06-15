@@ -4,8 +4,14 @@
   margin:0;
   padding: 0;
 }
+html{
+  min-height: 100%;
+}
+body{
+  height: 100%;
+}
 html,body{
-  min-height: fit-content;
+
   &::-webkit-scrollbar {
     width: 6px;
     background: #121212;
@@ -18,10 +24,8 @@ html,body{
 }
 
 #root,#app-container{
+  min-height: 100vh;
   position: relative;
   background: #121212;
 }
 
-html, body, #root, #root>div {
-  height: 100%
-}

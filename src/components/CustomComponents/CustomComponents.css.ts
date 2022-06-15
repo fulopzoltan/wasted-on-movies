@@ -102,3 +102,23 @@ export const StyledCheckbox = styled(Checkbox)`
     }
 `;
 export const StyledSnackbar = styled(Snackbar)``;
+
+export const StyledDateInput = styled.input`
+    width: 120px;
+    padding: 3px 6px;
+    background-color: ${theme.background.secondary};
+    border: 1px solid ${theme.text.main};
+    color: ${theme.text.white};
+    border-radius: 4px;
+    ::-webkit-calendar-picker-indicator {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="%23bbbbbb" d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>');
+    }
+    &:focus {
+        outline: none;
+    }
+    &:disabled {
+        opacity: 0.3;
+    }
+    transition: opacity ease-in-out 300ms;
+    color-scheme: dark;
+`;

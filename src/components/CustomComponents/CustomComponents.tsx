@@ -1,8 +1,9 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, InputHTMLAttributes, useEffect, useState } from 'react';
 import {
     StyledButton,
     StyledCheckbox,
     StyledCheckboxWrapper,
+    StyledDateInput,
     StyledSelectWrapper,
     StyledSnackbar,
     StyledTextField
@@ -12,6 +13,7 @@ import { ButtonProps, CheckboxProps, TextFieldProps } from '@material-ui/core';
 import { SnackbarProps } from '@mui/material/Snackbar/Snackbar';
 import { Alert, Slide, Snackbar } from '@mui/material';
 import Select, { Props } from 'react-select';
+import { getTodayDateString } from '../../utils/fnUtils';
 export const WOMButton: FC<{ kind: ButtonColors; text: string } & ButtonProps> = ({ kind, text, ...props }) => {
     return (
         <StyledButton variant={'contained'} kind={kind} {...props}>
@@ -80,4 +82,8 @@ export const WOMSnackbar: FC<{ type?: 'error' | 'success' | 'info'; onCloseClick
             {renderAlert()}
         </Snackbar>
     );
+};
+
+export const WOMDatePicker: FC<InputHTMLAttributes<HTMLInputElement>> = ({ ...props }) => {
+    return <StyledDateInput {...props} value={props.value || getTodayDateString()} type="date" />;
 };
