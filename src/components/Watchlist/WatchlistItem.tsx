@@ -10,10 +10,13 @@ import {
     ItemTopSection,
     SeasonContainer,
     SeasonSelectHolder,
-    WatchlistItemWrapper
+    WatchlistItemWrapper,
+    LikeButton,
+    DislikeButton,
+    TopRightActions
 } from './Watchlist.css';
 import { AssetEntry } from '../../types/AssetEntry';
-import { ExpandLess, ExpandMore, RemoveCircle } from '@material-ui/icons';
+import { ExpandLess, ExpandMore, RemoveCircle, SaveAlt } from '@material-ui/icons';
 import {
     AssetGenre,
     AssetName,
@@ -22,13 +25,16 @@ import {
     GenreWrapper,
     RightSection
 } from '../Dashboard/SearchPage.css';
-import { WOMButton, WOMCheckbox, WOMSelect } from '../CustomComponents/CustomComponents';
+import { WOMButton, WOMCheckbox, WOMDatePicker, WOMSelect } from '../CustomComponents/CustomComponents';
 import { useConfirm } from 'material-ui-confirm';
 import { useLoading } from '../../providers/LoadingContext';
 import FirebaseAPI from '../../utils/FirebaseAPI';
 import { useAuth } from '../../providers/AuthContext';
 import { useNotification } from '../../providers/NotificationContext';
 import _ from 'lodash';
+import { Radio } from '@material-ui/core';
+import { ThumbDown, ThumbUp } from '@mui/icons-material';
+import { getTodayDateString } from '../../utils/fnUtils';
 
 const WatchlistItem: FC<{
     entry: AssetEntry;
@@ -54,16 +60,23 @@ const WatchlistItem: FC<{
         const season = newEntry.seasons.find((season: any) => season.number === seasonNumber);
         const episode = season.episodes.find((episode: any) => episode.id === episodeId);
         episode.watched = !episode.watched;
+        if (episode.watched) episode.watchDate = getTodayDateString();
         //if all episodes check, check season
         const seasonCheck = season.episodes.every((episode: any) => episode.watched);
         season.watched = seasonCheck;
+        //if all seasons check, check entry
+        const entryCheck = newEntry.seasons.every((season: any) => season.watched);
+        newEntry.watched = entryCheck;
         setAssetEntry(newEntry);
     };
     const handleSeasonCheck = (seasonNumber: number) => {
         const newEntry = { ...assetEntry };
         const season = newEntry.seasons.find((season: any) => season.number === seasonNumber);
         season.watched = !season.watched;
-        season.episodes.forEach((episode: any) => (episode.watched = season.watched));
+        season.episodes.forEach((episode: any) => {
+            episode.watched = season.watched;
+            if (episode.watched) episode.watchDate = getTodayDateString();
+        });
         const entryCheck = newEntry.seasons.every((season: any) => season.watched);
         newEntry.watched = entryCheck;
         setAssetEntry(newEntry);
@@ -75,7 +88,10 @@ const WatchlistItem: FC<{
         if (newEntry.type === 'series') {
             newEntry.seasons.forEach((season: any) => {
                 season.watched = newEntry.watched;
-                season.episodes.forEach((episode: any) => (episode.watched = newEntry.watched));
+                season.episodes.forEach((episode: any) => {
+                    episode.watched = newEntry.watched;
+                    if (episode.watched) episode.watchDate = getTodayDateString();
+                });
             });
             const entryCheck = newEntry.seasons.every((season: any) => season.watched);
             newEntry.watched = entryCheck;
@@ -130,7 +146,18 @@ const WatchlistItem: FC<{
             setNotification({ open: true, type: 'error', message: 'Update failed!' });
         }
     };
-
+    const handleDateChange = (type: 'series' | 'movie', newDate: string, seasonNumber?: number, episodeId?: number) => {
+        const newEntry = { ...assetEntry };
+        if (type === 'movie') {
+            newEntry.watchDate = newDate;
+        }
+        if (type === 'series') {
+            const season = newEntry.seasons.find((season: any) => season.number === seasonNumber);
+            const episode = season.episodes.find((episode: any) => episode.id === episodeId);
+            episode.watchDate = newDate;
+        }
+        setAssetEntry(newEntry);
+    };
     const renderSelectedSeason = () => {
         if (assetEntry.type === 'movie') return;
         const season = assetEntry.seasons.find((season: any) => season.number === selectedSeason?.value);
@@ -148,6 +175,13 @@ const WatchlistItem: FC<{
                             onClick={() => handleEpisodeCheck(selectedSeason.value, episode.id)}
                             label={'Watched'}
                         />
+                        <WOMDatePicker
+                            value={episode.watchDate}
+                            disabled={!episode.watched}
+                            onChange={(evt) =>
+                                handleDateChange(assetEntry.type, evt.target.value, season.number, episode.id)
+                            }
+                        />
                     </RuntimeActionHolder>
                 </EpisodeInfo>
             </EpisodeContainer>
@@ -161,28 +195,35 @@ const WatchlistItem: FC<{
     if (!assetEntry) return null;
     return (
         <WatchlistItemWrapper expanded={expanded}>
-            <ExpandIconHolder
-                onClick={() => {
-                    if (entry.type === 'movie') return;
-                    onExpand();
-                }}
-            >
+            <TopRightActions>
                 {!checkUnsaved() && (
-                    <WOMButton kind={'PRIMARY'} text={'Save changes'} onClick={() => handleSaveClick()} />
+                    <WOMButton
+                        startIcon={<SaveAlt />}
+                        kind={'PRIMARY'}
+                        text={'Save changes'}
+                        onClick={() => handleSaveClick()}
+                    />
                 )}
-                {entry.type === 'series' &&
-                    (expanded ? (
-                        <>
-                            Collapse
-                            <ExpandLess />
-                        </>
-                    ) : (
-                        <>
-                            Expand
-                            <ExpandMore />
-                        </>
-                    ))}
-            </ExpandIconHolder>
+                {entry.type === 'series' && (
+                    <ExpandIconHolder
+                        onClick={() => {
+                            onExpand();
+                        }}
+                    >
+                        {expanded ? (
+                            <>
+                                Collapse
+                                <ExpandLess />
+                            </>
+                        ) : (
+                            <>
+                                Expand
+                                <ExpandMore />
+                            </>
+                        )}
+                    </ExpandIconHolder>
+                )}
+            </TopRightActions>
 
             <ItemTopSection>
                 <img src={assetEntry.image} width={220} height={336} />
@@ -204,6 +245,39 @@ const WatchlistItem: FC<{
                             checked={assetEntry.watched}
                             onClick={() => handleEntryCheck()}
                         />
+                        {assetEntry.type === 'movie' && (
+                            <WOMDatePicker
+                                disabled={!assetEntry.watched}
+                                value={assetEntry.watchDate}
+                                onChange={(evt) => handleDateChange(assetEntry.type, evt.target.value)}
+                            />
+                        )}
+                        <LikeButton>
+                            <Radio
+                                name="rating"
+                                icon={<ThumbUp />}
+                                checkedIcon={<ThumbUp />}
+                                checked={assetEntry.rating === 'LIKE'}
+                                onClick={() => {
+                                    const newEntry = { ...assetEntry };
+                                    newEntry.rating = 'LIKE';
+                                    setAssetEntry(newEntry);
+                                }}
+                            />
+                        </LikeButton>
+                        <DislikeButton>
+                            <Radio
+                                name="rating"
+                                icon={<ThumbDown />}
+                                checkedIcon={<ThumbDown />}
+                                checked={assetEntry.rating === 'DISLIKE'}
+                                onClick={() => {
+                                    const newEntry = { ...assetEntry };
+                                    newEntry.rating = 'DISLIKE';
+                                    setAssetEntry(newEntry);
+                                }}
+                            />
+                        </DislikeButton>
                     </RuntimeActionHolder>
 
                     <WOMButton
@@ -222,7 +296,7 @@ const WatchlistItem: FC<{
                         <WOMSelect
                             value={selectedSeason}
                             options={seasonOptions}
-                            onChange={(newOption) => setSelectedSeason(newOption)}
+                            onChange={(newOption: any) => setSelectedSeason(newOption)}
                         />
                         <WOMCheckbox
                             label={'Season Watched'}

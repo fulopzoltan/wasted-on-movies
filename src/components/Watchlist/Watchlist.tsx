@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import FirebaseAPI from '../../utils/FirebaseAPI';
 import { useAuth } from '../../providers/AuthContext';
 import { useLoading } from '../../providers/LoadingContext';
-import { NoWatchlistEntry, WatchlistWrapper, Watchtime } from './Watchlist.css';
+import { NoWatchlistEntry, WatchlistWrapper } from './Watchlist.css';
 import WatchlistItem from './WatchlistItem';
 import { WOMButton } from '../CustomComponents/CustomComponents';
 import { Search } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
-import { calculateRuntimeForAssetEntry } from '../../utils/fnUtils';
 
 const Watchlist = () => {
     const [watchlist, setWatchlist] = useState<any[] | null>(null);
@@ -15,12 +14,6 @@ const Watchlist = () => {
     const { token } = useAuth();
     const { setLoading } = useLoading();
     const history = useHistory();
-
-    const calculateWatchtime = () => {
-        let watchTime = 0;
-        watchlist?.forEach((entry) => (watchTime += calculateRuntimeForAssetEntry(entry)));
-        return watchTime;
-    };
 
     useEffect(() => {
         loadWatchlist();
@@ -69,9 +62,9 @@ const Watchlist = () => {
             />
         </NoWatchlistEntry>
     );
+
     return (
         <WatchlistWrapper>
-            <Watchtime>{`${calculateWatchtime()} minutes watched`}</Watchtime>
             {watchlist?.length !== 0 ? renderWatchlistEntries() : renderEmptyWatchlist()}
         </WatchlistWrapper>
     );

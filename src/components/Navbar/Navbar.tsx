@@ -23,6 +23,12 @@ const Navbar: FC<any> = (props) => {
                 <NavLink to={'/my_watchlist'} activeClassName={'active'}>
                     My Watchlist
                 </NavLink>
+                <NavLink to={'/analytics'} activeClassName={'active'}>
+                    Analytics
+                </NavLink>
+                {/*<NavLink to={'/recommendations'} activeClassName={'active'}>*/}
+                {/*    Recommendations*/}
+                {/*</NavLink>*/}
             </MenuWrapper>
             <DisplayName>
                 <SvgIcon>

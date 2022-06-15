@@ -12,11 +12,6 @@ export const WatchlistWrapper = styled.div`
     background-color: ${theme.background.main};
 `;
 
-export const Watchtime = styled.div`
-    font-size: 30px;
-    text-align: center;
-    color: ${theme.text.main};
-`;
 export const NoWatchlistEntry = styled.div`
     text-align: center;
     padding: 40px;
@@ -30,13 +25,19 @@ export const NoWatchlistEntry = styled.div`
         width: fit-content;
     }
 `;
+export const TopRightActions = styled.div`
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+`;
 export const ExpandIconHolder = styled.div`
     &:hover {
         cursor: pointer;
     }
-    position: absolute;
-    top: 20px;
-    right: 20px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -122,5 +123,28 @@ export const EpisodeOverview = styled.div`
     overflow: auto;
     &::-webkit-scrollbar {
         display: none;
+    }
+`;
+
+export const LikeButton = styled.div`
+    .MuiRadio-root {
+        opacity: 0.3;
+        &.Mui-checked {
+            opacity: 1;
+        }
+    }
+    svg {
+        color: green;
+    }
+`;
+export const DislikeButton = styled.div`
+    svg {
+        color: ${theme.text.main};
+    }
+    .MuiRadio-root {
+        opacity: 0.15;
+        &.Mui-checked {
+            opacity: 1;
+        }
     }
 `;

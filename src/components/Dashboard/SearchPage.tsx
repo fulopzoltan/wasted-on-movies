@@ -16,7 +16,7 @@ import {
     SeasonsWrapper
 } from './SearchPage.css';
 import { IconButton, InputAdornment } from '@material-ui/core';
-import { WOMButton, WOMTextField } from '../CustomComponents/CustomComponents';
+import { WOMButton, WOMDatePicker, WOMTextField } from '../CustomComponents/CustomComponents';
 import TheTVDBApi from '../../api/TheTVDBApi';
 import { useLoading } from '../../providers/LoadingContext';
 import ContentCard from '../ContentCard/ContentCard';
