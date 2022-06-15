@@ -8,7 +8,7 @@ export const LoginWrapper = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100%;
+    min-height: 100vh;
 `;
 
 export const LoginTitle = styled.div`

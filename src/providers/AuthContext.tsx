@@ -23,7 +23,7 @@ const useAuthService = () => {
             setUser(null);
             setToken('');
             setLoading(false);
-            throw ex;
+            return ex;
         }
     };
 
@@ -45,7 +45,7 @@ const useAuthService = () => {
                 setLoggedIn(false);
                 setUser(null);
                 setToken('');
-                throw error;
+                return error;
             });
     };
 
