@@ -24,7 +24,7 @@ import {
     AssetRuntime,
     GenreWrapper,
     RightSection
-} from '../Dashboard/SearchPage.css';
+} from '../Search/SearchPage.css';
 import { WOMButton, WOMCheckbox, WOMDatePicker, WOMSelect } from '../CustomComponents/CustomComponents';
 import { useConfirm } from 'material-ui-confirm';
 import { useLoading } from '../../providers/LoadingContext';
