@@ -63,6 +63,27 @@ export const calculateCalendarForWatchedEntries = (entries: AssetEntry[]) => {
         .filter((d) => d.day !== undefined);
     return data;
 };
+
+export const calculateLikeDislike = (entries: AssetEntry[]) => {
+    const like = {
+        id: 'Like',
+        label: 'Like',
+        value: 0,
+        color: '#095000'
+    };
+    const dislike = {
+        id: 'Dislike',
+        label: 'Dislike',
+        value: 0,
+        color: theme.text.main
+    };
+    entries.forEach((entry) => {
+        if (entry.rating === 'LIKE') like.value++;
+        if (entry.rating === 'DISLIKE') dislike.value++;
+    });
+    return [like, dislike];
+};
+
 export const getTodayDateString = () => {
     const today = new Date();
     const month = today.getMonth() + 1 >= 10 ? today.getMonth() + 1 : `0${today.getMonth() + 1}`;

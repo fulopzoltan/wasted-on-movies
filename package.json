@@ -11,6 +11,7 @@
     "@nivo/calendar": "^0.79.1",
     "@nivo/circle-packing": "^0.79.1",
     "@nivo/core": "^0.79.0",
+    "@nivo/pie": "^0.79.1",
     "@nivo/treemap": "^0.79.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -68,6 +69,8 @@
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
     "@types/lodash": "^4.14.175",
     "@types/react-router-dom": "^5.3.1",
     "@typescript-eslint/eslint-plugin": "^5.0.0",

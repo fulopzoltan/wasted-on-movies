@@ -3,6 +3,7 @@ import { AnalyticsWrapper, ChartTitle, ChartWrapper, WatchtimesHolder } from './
 import {
     calculateCalendarForWatchedEntries,
     calculateGenresAggregate,
+    calculateLikeDislike,
     calculateRuntimeForAssetEntry
 } from '../../utils/fnUtils';
 import FirebaseAPI from '../../utils/FirebaseAPI';
@@ -17,6 +18,7 @@ import { NoWatchlistEntry } from '../Watchlist/Watchlist.css';
 import { WOMButton } from '../CustomComponents/CustomComponents';
 import { Search } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
+import LikeDislikePie from '../Charts/LikeDislikePie';
 
 const Analytics = () => {
     const [watchlist, setWatchlist] = useState<any[] | null>(null);
@@ -57,6 +59,13 @@ const Analytics = () => {
             <WatchDateCalendar data={calculateCalendarForWatchedEntries(watchlist || [])} />
         </ChartWrapper>
     );
+    const renderLikeDislikePie = () => (
+        <ChartWrapper>
+            <ChartTitle>Like/Dislike ratio</ChartTitle>
+            <LikeDislikePie data={calculateLikeDislike(watchlist || [])} />
+        </ChartWrapper>
+    );
+
     const renderWatchtimes = () => {
         const minutes = calculateWatchtime();
         const hours = Math.round((minutes / 60) * 10) / 10;
@@ -104,6 +113,7 @@ const Analytics = () => {
         <AnalyticsWrapper>
             {renderWatchtimes()}
             {renderWatchCalendar()}
+            {renderLikeDislikePie()}
             {renderGenresTreeMapChart()}
         </AnalyticsWrapper>
     );

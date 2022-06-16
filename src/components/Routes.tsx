@@ -2,7 +2,7 @@ import { useAuth } from '../providers/AuthContext';
 import React, { FC, useEffect } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import Login from './Login/Login';
-import SearchPage from './Dashboard/SearchPage';
+import SearchPage from './Search/SearchPage';
 import Navbar from './Navbar/Navbar';
 import Register from './Register/Register';
 import NotFound from './NotFound/NotFound';
@@ -11,6 +11,7 @@ import Watchlist from './Watchlist/Watchlist';
 import jwtDecode from 'jwt-decode';
 import { useNotification } from '../providers/NotificationContext';
 import Analytics from './Analytics/Analytics';
+import Recommendations from './Recommendations/Recommendations';
 
 interface IPrivateRoute {
     component: any;
@@ -68,6 +69,7 @@ const Routes = () => {
                 <PrivateRoute component={SearchPage} exact path={'/search'} />
                 <PrivateRoute component={Watchlist} exact path={'/my_watchlist'} />
                 <PrivateRoute component={Analytics} exact path={'/analytics'} />
+                <PrivateRoute component={Recommendations} exact path={'/recommendations'} />
                 <Route component={NotFound} />
             </Switch>
         </>

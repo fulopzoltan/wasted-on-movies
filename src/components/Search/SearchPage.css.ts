@@ -83,7 +83,11 @@ export const AssetName = styled.div`
 `;
 export const AssetOverview = styled.div`
     width: 400px;
-    min-height: 100px;
+    height: 100px;
+    overflow: auto;
+    &::-webkit-scrollbar {
+        display: none;
+    }
 `;
 export const AssetRuntime = styled.div`
     font-weight: bold;
