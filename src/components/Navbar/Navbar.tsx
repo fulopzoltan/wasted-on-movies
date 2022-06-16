@@ -26,9 +26,9 @@ const Navbar: FC<any> = (props) => {
                 <NavLink to={'/analytics'} activeClassName={'active'}>
                     Analytics
                 </NavLink>
-                {/*<NavLink to={'/recommendations'} activeClassName={'active'}>*/}
-                {/*    Recommendations*/}
-                {/*</NavLink>*/}
+                <NavLink to={'/recommendations'} activeClassName={'active'}>
+                    Recommendations
+                </NavLink>
             </MenuWrapper>
             <DisplayName>
                 <SvgIcon>
