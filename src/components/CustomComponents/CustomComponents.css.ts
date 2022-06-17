@@ -12,6 +12,11 @@ export const StyledButton = styled(Button).attrs(({ kind }: IStyledButton & Butt
     &.MuiButton-contained {
         background-color: ${({ kind }) => theme.button?.[kind] || theme.button.DEFAULT};
         color: ${({ kind }) => (kind === 'PRIMARY' ? theme.text.white : theme.text.main)};
+        &.Mui-disabled {
+            opacity: 0.5;
+            background-color: ${theme.background.secondary};
+            color: ${({ kind }) => (kind === 'PRIMARY' ? theme.text.white : theme.text.main)};
+        }
     }
 `;
 

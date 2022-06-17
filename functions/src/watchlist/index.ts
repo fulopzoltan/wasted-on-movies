@@ -11,6 +11,13 @@ router.get('/', async (req, res, next) => {
     const watchlist = Object.values(watchlistData);
     res.send({ success: true, data: watchlist });
 });
+router.get('/addedIds', async (req, res, next) => {
+    const uid = res.locals.userUid;
+    const watchlistSnapshot = await firestore().collection('watchlist').doc(`user-${uid}`);
+    const watchlistData = (await watchlistSnapshot.get()).data() || {};
+    const watchlistIds = Object.keys(watchlistData);
+    res.send({ success: true, data: watchlistIds });
+});
 router.get('/:id', (req, res, next) => {
     res.send({ success: true });
 });

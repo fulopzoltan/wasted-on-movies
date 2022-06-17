@@ -20,7 +20,7 @@ import { WOMButton, WOMDatePicker, WOMTextField } from '../CustomComponents/Cust
 import TheTVDBApi from '../../api/TheTVDBApi';
 import { useLoading } from '../../providers/LoadingContext';
 import ContentCard from '../ContentCard/ContentCard';
-import { AddTask, Search } from '@mui/icons-material';
+import { AddTask, Bookmark, BookmarkAdd, BookmarkAdded, Search } from '@mui/icons-material';
 import { ArrowBackIos } from '@material-ui/icons';
 import { theme } from '../../utils/theme';
 import { AssetEntry } from '../../types/AssetEntry';
@@ -38,12 +38,20 @@ const SearchPage = () => {
     const { setNotification } = useNotification();
     const { token } = useAuth();
     const [view, setView] = useState<'SEARCH' | 'DETAIL'>('SEARCH');
+    const [addedIds, setAddedIds] = useState<any>([]);
 
     const search = async () => {
         if (!searchTerm) return;
         setLoading(true);
         const response: any = await TheTVDBApi.search(searchTerm);
         setSearchResult(response.data);
+        setLoading(false);
+    };
+
+    const loadAddedEntryIds = async () => {
+        setLoading(true);
+        const response: any = await FirebaseAPI.getWatchlistIds(token);
+        setAddedIds(response.data);
         setLoading(false);
     };
 
@@ -75,6 +83,7 @@ const SearchPage = () => {
 
     useEffect(() => {
         loadDetail();
+        loadAddedEntryIds();
     }, [assetToLoad]);
 
     const renderSearchView = () => {
@@ -162,6 +171,7 @@ const SearchPage = () => {
         setLoading(true);
         setNotification({ open: true, type: 'info', message: 'Adding to watchlist...' });
         const response = await FirebaseAPI.addToWatchlist(token, dataToSave);
+        setAddedIds([`${dataToSave.id}`, ...addedIds]);
         setLoading(false);
         setNotification({ open: true, type: 'success', message: `${dataToSave.name} was added to your watchlist ` });
     };
@@ -202,8 +212,9 @@ const SearchPage = () => {
                         </AssetRuntime>
                         <WOMButton
                             kind={'PRIMARY'}
-                            text={'Add to my watchlist'}
-                            startIcon={<AddTask />}
+                            text={addedIds.includes(`${assetToLoad.id}`) ? 'On your watchlist' : 'Add to my watchlist'}
+                            disabled={addedIds.includes(`${assetToLoad.id}`)}
+                            startIcon={addedIds.includes(`${assetToLoad.id}`) ? <BookmarkAdded /> : <BookmarkAdd />}
                             onClick={() => addToWatchlist()}
                         />
                     </RightSection>
