@@ -2,10 +2,10 @@ import React, { FC, useEffect, useState } from 'react';
 import { AppName, DisplayName, MenuWrapper, NavbarWrapper } from './Navbar.css';
 import { WOMButton } from '../CustomComponents/CustomComponents';
 import { useAuth } from '../../providers/AuthContext';
-import { Logout } from '@mui/icons-material';
+import { Insights, Logout, Recommend } from '@mui/icons-material';
 import { NavLink, useHistory } from 'react-router-dom';
 import { SvgIcon } from '@material-ui/core';
-import { PersonPin } from '@material-ui/icons';
+import { Bookmark, PersonPin, Search } from '@material-ui/icons';
 
 const Navbar: FC<any> = (props) => {
     const { logUserOut, user } = useAuth();
@@ -18,15 +18,19 @@ const Navbar: FC<any> = (props) => {
             </AppName>
             <MenuWrapper>
                 <NavLink to={'/search'} activeClassName={'active'}>
+                    <Search />
                     Search
                 </NavLink>
                 <NavLink to={'/my_watchlist'} activeClassName={'active'}>
+                    <Bookmark />
                     My Watchlist
                 </NavLink>
                 <NavLink to={'/analytics'} activeClassName={'active'}>
+                    <Insights />
                     Analytics
                 </NavLink>
                 <NavLink to={'/recommendations'} activeClassName={'active'}>
+                    <Recommend />
                     Recommendations
                 </NavLink>
             </MenuWrapper>

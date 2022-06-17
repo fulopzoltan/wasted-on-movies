@@ -24,7 +24,7 @@ const PrivateRoute: FC<IPrivateRoute> = ({ component: Component, path, ...rest }
     const { setNotification } = useNotification();
     useEffect(() => {
         checkIdToken();
-    }, []);
+    }, [path]);
     const isAuthenticated = () => {
         if (!loggedIn || !token) {
             logUserOut();

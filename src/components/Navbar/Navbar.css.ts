@@ -50,6 +50,10 @@ export const MenuWrapper = styled.div`
     align-items: center;
     gap: 20px;
     a {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
         font-size: 14px;
         color: ${theme.text.white};
         text-decoration: none;
