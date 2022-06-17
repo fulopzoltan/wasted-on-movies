@@ -30,7 +30,16 @@ class FirebaseAPI {
                 .catch((e) => reject(e));
         });
     }
-
+    async getWatchlistIds(token: string) {
+        return new Promise<AxiosResponse<any>>((resolve, reject) => {
+            this.client
+                .get('/watchlist/addedIds', { headers: { Authorization: `Bearer ${token}` } })
+                .then((result: AxiosResponse<any>) => {
+                    return resolve(result.data);
+                })
+                .catch((e) => reject(e));
+        });
+    }
     async getWatchlist(token: string) {
         return new Promise<AxiosResponse<any>>((resolve, reject) => {
             this.client
