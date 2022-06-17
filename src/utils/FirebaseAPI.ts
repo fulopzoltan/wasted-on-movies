@@ -9,7 +9,7 @@ class FirebaseAPI {
 
     constructor() {
         this.baseURL = FIREBASE_FUNC_BASE_URL || '';
-        // this.baseURL = 'http://localhost:5001/wasted-on-movies/europe-west3/api';
+        this.baseURL = 'http://localhost:5001/wasted-on-movies/europe-west3/api';
         this.client = this.createAxiosClient();
     }
     private createAxiosClient(): AxiosInstance {
@@ -36,6 +36,16 @@ class FirebaseAPI {
         return new Promise<AxiosResponse<any>>((resolve, reject) => {
             this.client
                 .get('/watchlist', { headers: { Authorization: `Bearer ${token}` } })
+                .then((result: AxiosResponse<any>) => {
+                    return resolve(result.data);
+                })
+                .catch((e) => reject(e));
+        });
+    }
+    async getWatchlistIds(token: string) {
+        return new Promise<AxiosResponse<any>>((resolve, reject) => {
+            this.client
+                .get('/watchlist/addedIds', { headers: { Authorization: `Bearer ${token}` } })
                 .then((result: AxiosResponse<any>) => {
                     return resolve(result.data);
                 })

@@ -4,12 +4,15 @@ import { useAuth } from '../../providers/AuthContext';
 import { useLoading } from '../../providers/LoadingContext';
 import { NoWatchlistEntry, WatchlistWrapper } from './Watchlist.css';
 import WatchlistItem from './WatchlistItem';
-import { WOMButton } from '../CustomComponents/CustomComponents';
+import { WOMButton, WOMTextField } from '../CustomComponents/CustomComponents';
 import { Search } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
+import { IconButton, InputAdornment } from '@material-ui/core';
+import { FilterAlt } from '@mui/icons-material';
 
 const Watchlist = () => {
     const [watchlist, setWatchlist] = useState<any[] | null>(null);
+    const [searchTerm, setSearchTerm] = useState('');
     const [expanded, setExpanded] = useState<any>({});
     const { token } = useAuth();
     const { setLoading } = useLoading();
@@ -40,17 +43,37 @@ const Watchlist = () => {
             console.error(ex);
         }
     };
-    const renderWatchlistEntries = () =>
-        watchlist?.map((entry, index) => (
-            <WatchlistItem
-                key={entry.id}
-                entry={entry}
-                expanded={expanded[index]}
-                onDelete={() => loadWatchlist()}
-                onSave={() => loadWatchlist()}
-                onExpand={() => updateExpandedIndex(index)}
+    const renderWatchlistEntries = () => (
+        <>
+            <WOMTextField
+                value={searchTerm}
+                onChange={(evt) => setSearchTerm(evt.target.value)}
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position={'start'}>
+                            <IconButton>
+                                <FilterAlt />
+                            </IconButton>
+                        </InputAdornment>
+                    )
+                }}
+                placeholder={'Filter by name...'}
             />
-        ));
+            {watchlist
+                ?.filter((entry) => entry.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()))
+                .map((entry, index) => (
+                    <WatchlistItem
+                        key={entry.id}
+                        entry={entry}
+                        expanded={expanded[index]}
+                        onDelete={() => loadWatchlist()}
+                        onSave={() => loadWatchlist()}
+                        onExpand={() => updateExpandedIndex(index)}
+                    />
+                ))}
+        </>
+    );
+
     const renderEmptyWatchlist = () => (
         <NoWatchlistEntry>
             It seems like your watchlist is empty
