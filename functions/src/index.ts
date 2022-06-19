@@ -3,6 +3,7 @@ import cors from 'cors';
 import * as functions from 'firebase-functions';
 import { checkAuth } from './middlewares/checkAuth';
 import watchlist from './watchlist';
+import review from './review';
 import * as admin from 'firebase-admin';
 // import { getFirestore } from 'firebase/firestore';
 
@@ -18,6 +19,7 @@ app.use(checkAuth);
 
 // Watchlist CRUD
 app.use('/watchlist', watchlist);
+app.use('/review', review);
 
 // BASE ROUTE
 app.get('/', (req: Request, res: Response) => {

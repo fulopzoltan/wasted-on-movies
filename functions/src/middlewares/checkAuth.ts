@@ -14,7 +14,6 @@ export async function checkAuth(req: Request | any, res: Response, next: NextFun
         res.locals.userUid = decodedToken.uid;
         next();
     } catch (err) {
-        console.log(err);
         res.sendStatus(401).send({ success: false, message: 'Unauthorized' });
         return;
     }

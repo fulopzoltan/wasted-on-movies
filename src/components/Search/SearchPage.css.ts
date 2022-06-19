@@ -80,6 +80,15 @@ export const RightSection = styled.div`
 export const AssetName = styled.div`
     font-weight: bold;
     font-size: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    span {
+        font-weight: lighter;
+        font-style: italic;
+        font-size: 12px;
+    }
 `;
 export const AssetOverview = styled.div`
     width: 400px;

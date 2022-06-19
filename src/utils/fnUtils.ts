@@ -91,3 +91,30 @@ export const getTodayDateString = () => {
     const date = today.getFullYear() + '-' + month + '-' + day;
     return date;
 };
+
+export const getTop5GenresWithWeights = (entries: AssetEntry[], expectedSum: number) => {
+    const genresAggregate: any = {};
+    entries.forEach((entry) =>
+        entry.genres.forEach((genre: any) => {
+            if (!genresAggregate[genre.name]) {
+                genresAggregate[genre.name] = 1;
+            } else {
+                genresAggregate[genre.name]++;
+            }
+        })
+    );
+    const top5Genres: any = {};
+    Object.keys(genresAggregate)
+        .sort((a, b) => genresAggregate[b] - genresAggregate[a])
+        .forEach((key, ind) => {
+            if (ind < 5) {
+                top5Genres[key] = genresAggregate[key];
+            }
+        });
+    const actualSum = Object.values(top5Genres).reduce((prev: number, current: any) => {
+        return prev + current;
+    }, 0);
+    const normalizer = expectedSum / actualSum;
+    Object.keys(top5Genres).forEach((key) => (top5Genres[key] = Math.round(top5Genres[key] * normalizer)));
+    return top5Genres;
+};
