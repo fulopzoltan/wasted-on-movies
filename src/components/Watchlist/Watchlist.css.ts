@@ -91,9 +91,6 @@ export const SeasonSelectHolder = styled.div`
 
 export const SeasonContainer = styled.div`
     color: ${theme.text.white};
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
 `;
 export const EpisodeContainer = styled.div`
     display: flex;
@@ -110,6 +107,19 @@ export const EpisodeName = styled.div`
     font-weight: bold;
 `;
 
+export const SentimentIcon = styled.div<{ sentiment: 'positive' | 'negative' | 'neutral' | 'unknown' }>`
+    svg {
+        width: 24px;
+        height: 24px;
+        fill: ${({ sentiment }) => (sentiment === 'positive' ? 'green' : sentiment === 'negative' ? 'red' : 'grey')};
+    }
+`;
+
+export const ReviewCount = styled.div`
+    font-size: 12px;
+    font-weight: lighter;
+    font-style: italic;
+`;
 export const RuntimeActionHolder = styled.div`
     display: flex;
     flex-direction: row;

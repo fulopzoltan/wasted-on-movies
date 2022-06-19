@@ -1,11 +1,12 @@
 export type ButtonColors = keyof typeof theme.button;
 export const theme = {
     button: {
-        PRIMARY: '#E50914',
-        DEFAULT: '#FEFEFE'
+        PRIMARY: '#A6051A',
+        DEFAULT: '#FEFEFE',
+        REVIEW: '#FF4500'
     },
     text: {
-        main: '#E50914',
+        main: '#A6051A',
         white: '#FEFEFE',
         error: '#B00020'
     },
@@ -15,3 +16,7 @@ export const theme = {
         error: '#CF6679'
     }
 };
+
+// #A6051A
+
+// #E50914

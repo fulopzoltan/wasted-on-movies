@@ -6,7 +6,7 @@ import {
     calculateLikeDislike,
     calculateRuntimeForAssetEntry
 } from '../../utils/fnUtils';
-import FirebaseAPI from '../../utils/FirebaseAPI';
+import FirebaseAPI from '../../api/FirebaseAPI';
 import { useAuth } from '../../providers/AuthContext';
 import { useLoading } from '../../providers/LoadingContext';
 import { Watchtime } from '../Analytics/Analytics.css';

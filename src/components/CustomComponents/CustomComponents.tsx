@@ -8,12 +8,15 @@ import {
     StyledSnackbar,
     StyledTextField
 } from './CustomComponents.css';
-import { ButtonColors } from '../../utils/theme';
+import { ButtonColors, theme } from '../../utils/theme';
 import { ButtonProps, CheckboxProps, TextFieldProps } from '@material-ui/core';
 import { SnackbarProps } from '@mui/material/Snackbar/Snackbar';
 import { Alert, Slide, Snackbar } from '@mui/material';
 import Select, { Props } from 'react-select';
 import { getTodayDateString } from '../../utils/fnUtils';
+import Modal from 'react-modal';
+import { Close } from '@material-ui/icons';
+
 export const WOMButton: FC<{ kind: ButtonColors; text: string } & ButtonProps> = ({ kind, text, ...props }) => {
     return (
         <StyledButton variant={'contained'} kind={kind} {...props}>
@@ -86,4 +89,24 @@ export const WOMSnackbar: FC<{ type?: 'error' | 'success' | 'info'; onCloseClick
 
 export const WOMDatePicker: FC<InputHTMLAttributes<HTMLInputElement>> = ({ ...props }) => {
     return <StyledDateInput {...props} value={props.value || getTodayDateString()} type="date" />;
+};
+Modal.setAppElement('#root');
+export const WOMModal: FC<{ open: boolean; onClose: () => void }> = ({ open, onClose, children }) => {
+    return (
+        <Modal
+            className={'wom-modal'}
+            overlayClassName={'wom-overlay'}
+            isOpen={open}
+            onRequestClose={() => {
+                onClose();
+            }}
+        >
+            <div className={'modal-upper'}>
+                <div className={'close-icon-holder'}>
+                    <Close onClick={() => onClose()} />
+                </div>
+            </div>
+            <div className={'modal-content'}>{children}</div>
+        </Modal>
+    );
 };

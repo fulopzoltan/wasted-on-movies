@@ -13,7 +13,9 @@ import {
     WatchlistItemWrapper,
     LikeButton,
     DislikeButton,
-    TopRightActions
+    TopRightActions,
+    SentimentIcon,
+    ReviewCount
 } from './Watchlist.css';
 import { AssetEntry } from '../../types/AssetEntry';
 import { ExpandLess, ExpandMore, RemoveCircle, SaveAlt } from '@material-ui/icons';
@@ -28,13 +30,17 @@ import {
 import { WOMButton, WOMCheckbox, WOMDatePicker, WOMSelect } from '../CustomComponents/CustomComponents';
 import { useConfirm } from 'material-ui-confirm';
 import { useLoading } from '../../providers/LoadingContext';
-import FirebaseAPI from '../../utils/FirebaseAPI';
+import FirebaseAPI from '../../api/FirebaseAPI';
 import { useAuth } from '../../providers/AuthContext';
 import { useNotification } from '../../providers/NotificationContext';
 import _ from 'lodash';
 import { Radio } from '@material-ui/core';
-import { ThumbDown, ThumbUp } from '@mui/icons-material';
+import { Reviews, ThumbDown, ThumbUp } from '@mui/icons-material';
 import { getTodayDateString } from '../../utils/fnUtils';
+import { Review } from '../../types/Review';
+import { getReviewSentiment } from '../../api/SentimentAPI';
+import { icons } from '../../assets/icons/icons';
+import InlineSVG from 'react-inlinesvg';
 
 const WatchlistItem: FC<{
     entry: AssetEntry;
@@ -42,15 +48,22 @@ const WatchlistItem: FC<{
     onSave: () => void;
     onExpand: () => void;
     onDelete: () => void;
-}> = ({ entry, expanded, onExpand, onSave, onDelete }) => {
+    onReview: () => void;
+    reloadReview?: boolean;
+}> = ({ entry, expanded, onExpand, onSave, onDelete, onReview, reloadReview }) => {
     const [assetEntry, setAssetEntry] = useState<AssetEntry>();
     const [seasonOptions, setSeasonOptions] = useState<any>([]);
     const [selectedSeason, setSelectedSeason] = useState<any>({});
+    const [reviews, setReviews] = useState<Review[]>([]);
+    const [sentiment, setSentiment] = useState<'positive' | 'negative' | 'neutral' | 'unknown'>('unknown');
     const confirm = useConfirm();
     const { setLoading } = useLoading();
     const { token } = useAuth();
     const { setNotification } = useNotification();
-
+    //reloadReviews
+    useEffect(() => {
+        loadReviews();
+    }, [reloadReview]);
     // Returns false if there are unsaved changes
     const checkUnsaved = () => {
         return _.isEqual(assetEntry, entry);
@@ -98,7 +111,19 @@ const WatchlistItem: FC<{
         }
         setAssetEntry(newEntry);
     };
-
+    const loadReviews = async () => {
+        if (!entry.id) return;
+        try {
+            setLoading(true);
+            const response = await FirebaseAPI.getReview(token, entry.id);
+            setReviews(response.data);
+            setLoading(false);
+        } catch (error) {
+            setReviews([]);
+            setLoading(false);
+            console.error(error);
+        }
+    };
     useEffect(() => {
         setAssetEntry(_.cloneDeep(entry));
         const options =
@@ -109,6 +134,22 @@ const WatchlistItem: FC<{
         setSeasonOptions(options);
         setSelectedSeason(options[0]);
     }, [entry]);
+
+    useEffect(() => {
+        getSentimentBasedOnReviews();
+    }, [reviews]);
+
+    const getSentimentBasedOnReviews = async () => {
+        if (reviews.length === 0) return setSentiment('unknown');
+        try {
+            const messages = reviews.map((review) => review.message);
+            const response: { sentiment?: string } & any = await getReviewSentiment(messages.join('. '));
+            setSentiment(response?.sentiment || 'unknown');
+        } catch (err) {
+            setSentiment('unknown');
+            console.error(err);
+        }
+    };
 
     const handleRemoveClick = () => {
         confirm({
@@ -135,6 +176,7 @@ const WatchlistItem: FC<{
                 /* ... */
             });
     };
+
     const handleSaveClick = async () => {
         try {
             setLoading(true);
@@ -157,6 +199,27 @@ const WatchlistItem: FC<{
             episode.watchDate = newDate;
         }
         setAssetEntry(newEntry);
+    };
+    const renderSentimentIcon = () => {
+        let icon = '';
+        switch (sentiment) {
+            case 'positive':
+                icon = icons.positiveIcon;
+                break;
+            case 'negative':
+                icon = icons.negativeIcon;
+                break;
+            case 'neutral':
+                icon = icons.neutralIcon;
+                break;
+            default:
+                break;
+        }
+        return icon ? (
+            <SentimentIcon sentiment={sentiment}>
+                <InlineSVG src={icon} />
+            </SentimentIcon>
+        ) : null;
     };
     const renderSelectedSeason = () => {
         if (assetEntry.type === 'movie') return;
@@ -228,7 +291,10 @@ const WatchlistItem: FC<{
             <ItemTopSection>
                 <img src={assetEntry.image} width={220} height={336} />
                 <RightSection>
-                    <AssetName>{assetEntry.name}</AssetName>
+                    <AssetName>
+                        {assetEntry.name} {renderSentimentIcon()}
+                        {sentiment !== 'unknown' && <span>{`reviewers\' sentiment`}</span>}
+                    </AssetName>
                     <AssetOverview>{assetEntry.overview}</AssetOverview>
                     <GenreWrapper>
                         {assetEntry.genres.map((g: any, index: number) => (
@@ -278,6 +344,13 @@ const WatchlistItem: FC<{
                                 }}
                             />
                         </DislikeButton>
+                        <WOMButton
+                            startIcon={<Reviews />}
+                            kind={'DEFAULT'}
+                            text={'Leave a review'}
+                            onClick={() => onReview()}
+                        />
+                        <ReviewCount>{reviews.length} review(s)</ReviewCount>
                     </RuntimeActionHolder>
 
                     <WOMButton

@@ -24,9 +24,11 @@ import { AddTask, Bookmark, BookmarkAdd, BookmarkAdded, Search } from '@mui/icon
 import { ArrowBackIos } from '@material-ui/icons';
 import { theme } from '../../utils/theme';
 import { AssetEntry } from '../../types/AssetEntry';
-import FirebaseAPI from '../../utils/FirebaseAPI';
+import FirebaseAPI from '../../api/FirebaseAPI';
 import { useAuth } from '../../providers/AuthContext';
 import { useNotification } from '../../providers/NotificationContext';
+import { useHistory } from 'react-router-dom';
+import { getReviewSentiment } from '../../api/SentimentAPI';
 
 const SearchPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -49,10 +51,8 @@ const SearchPage = () => {
     };
 
     const loadAddedEntryIds = async () => {
-        setLoading(true);
         const response: any = await FirebaseAPI.getWatchlistIds(token);
         setAddedIds(response.data);
-        setLoading(false);
     };
 
     const loadDetail = async () => {

@@ -8,14 +8,16 @@ export const StyledButton = styled(Button).attrs(({ kind }: IStyledButton & Butt
     &.MuiButton-root {
         height: 34px;
         min-width: 120px;
+        max-width: max-content;
+        padding: 0 12px;
     }
     &.MuiButton-contained {
         background-color: ${({ kind }) => theme.button?.[kind] || theme.button.DEFAULT};
-        color: ${({ kind }) => (kind === 'PRIMARY' ? theme.text.white : theme.text.main)};
+        color: ${({ kind }) => (['PRIMARY'].includes(kind) ? theme.text.white : theme.text.main)};
         &.Mui-disabled {
             opacity: 0.5;
             background-color: ${theme.background.secondary};
-            color: ${({ kind }) => (kind === 'PRIMARY' ? theme.text.white : theme.text.main)};
+            color: ${({ kind }) => (['PRIMARY'].includes(kind) ? theme.text.white : theme.text.main)};
         }
     }
 `;
@@ -48,6 +50,20 @@ export const StyledTextField = styled(TextField)`
                 color: ${theme.text.white};
             }
         }
+    }
+    .MuiOutlinedInput-adornedEnd {
+        svg {
+            path {
+                color: ${theme.text.white};
+            }
+        }
+    }
+    .MuiIconButton-root {
+        padding: 0;
+        transition: opacity ease-in-out 200ms;
+    }
+    .MuiButtonBase-root.Mui-disabled {
+        opacity: 0.3;
     }
 `;
 

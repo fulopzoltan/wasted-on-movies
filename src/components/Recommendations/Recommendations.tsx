@@ -26,9 +26,10 @@ import { AddTask, BookmarkAdd, BookmarkAdded, Search } from '@mui/icons-material
 import { ArrowBackIos } from '@material-ui/icons';
 import { theme } from '../../utils/theme';
 import { AssetEntry } from '../../types/AssetEntry';
-import FirebaseAPI from '../../utils/FirebaseAPI';
+import FirebaseAPI from '../../api/FirebaseAPI';
 import { useAuth } from '../../providers/AuthContext';
 import { useNotification } from '../../providers/NotificationContext';
+import { getTop5GenresWithWeights } from '../../utils/fnUtils';
 
 const Recommendations = () => {
     const [topMovies, setTopMovies] = useState<any | null>(null);
@@ -41,6 +42,13 @@ const Recommendations = () => {
     const { token } = useAuth();
     const [view, setView] = useState<'SEARCH' | 'DETAIL'>('SEARCH');
     const [addedIds, setAddedIds] = useState<any>([]);
+    const [watchlist, setWatchlist] = useState<any>([]);
+    const [genres, setGenres] = useState<any>([]);
+
+    const [idsLoaded, setIdsLoaded] = useState(false);
+
+    const [recommendedSeries, setRecommendedSeries] = useState<any[]>([]);
+    const [recommendedMovies, setRecommendedMovies] = useState<any[]>([]);
 
     const getTopMovies = async () => {
         setLoading(true);
@@ -54,12 +62,74 @@ const Recommendations = () => {
         setTopSeries(response.status === 'success' ? response.data : []);
         setLoading(false);
     };
+    const loadWatchlist = async () => {
+        try {
+            const response = await FirebaseAPI.getWatchlist(token);
+            setWatchlist(response.data);
+        } catch (ex) {
+            setWatchlist([]);
+            console.error(ex);
+        }
+    };
+
+    const loadGenres = async () => {
+        try {
+            const genres = await TheTVDBApi.getGenres();
+            setGenres(genres.data);
+        } catch (ex) {
+            console.error(ex);
+        }
+    };
+
+    useEffect(() => {
+        if (!watchlist.length || !genres.length || !idsLoaded) return;
+        const weightedGenres = getTop5GenresWithWeights(watchlist, 30);
+
+        const genreIdAndCount: { [key: string]: number } = {};
+        genres.forEach((genre: { id: number; name: string }) => {
+            if (weightedGenres.hasOwnProperty(genre.name)) {
+                genreIdAndCount[genre.id] = weightedGenres[genre.name];
+            }
+        });
+        // Get Recommended Movies
+        Promise.all(
+            Object.entries(genreIdAndCount).map(([genreId, count]) =>
+                TheTVDBApi.recommendedMoviesByGenre(genreId, addedIds, count)
+            )
+        ).then((results) => {
+            const recommendedMoviesArray: any[] = [];
+            results.forEach((result: any) => {
+                recommendedMoviesArray.push(...result.data);
+            });
+            setRecommendedMovies(recommendedMoviesArray);
+        });
+
+        // Get Recommended Series
+        Promise.all(
+            Object.entries(genreIdAndCount).map(([genreId, count]) =>
+                TheTVDBApi.recommendedSeriesByGenre(genreId, addedIds, count)
+            )
+        ).then((results) => {
+            const recommendedSeriesArray: any[] = [];
+            results.forEach((result: any) => {
+                recommendedSeriesArray.push(...result.data);
+            });
+            setRecommendedSeries(recommendedSeriesArray);
+        });
+    }, [watchlist, genres, idsLoaded]);
 
     const loadAddedEntryIds = async () => {
         setLoading(true);
-        const response: any = await FirebaseAPI.getWatchlistIds(token);
-        setAddedIds(response.data);
-        setLoading(false);
+        try {
+            const response: any = await FirebaseAPI.getWatchlistIds(token);
+            setAddedIds(response.data);
+            setIdsLoaded(true);
+            setLoading(false);
+        } catch (ex) {
+            console.error(ex);
+            setIdsLoaded(false);
+            setLoading(false);
+        }
     };
 
     const loadDetail = async () => {
@@ -96,6 +166,8 @@ const Recommendations = () => {
     useEffect(() => {
         getTopMovies();
         getTopSeries();
+        loadWatchlist();
+        loadGenres();
     }, []);
     const renderTopMovies = () => {
         if (!topMovies) return;
@@ -138,6 +210,64 @@ const Recommendations = () => {
                         return (
                             <ContentCard
                                 key={content.id}
+                                objectID={content.objectID}
+                                poster={content.image}
+                                name={content.name}
+                                overview={' '}
+                                onDetail={() => {
+                                    setView('DETAIL');
+                                    setAssetToLoad({
+                                        type: 'series',
+                                        id: content.id
+                                    });
+                                }}
+                            />
+                        );
+                    })}
+                </RecommendationsWrapper>
+            </RecommendationHolder>
+        );
+    };
+
+    const renderRecommendedMovies = () => {
+        if (!recommendedMovies.length) return;
+        return (
+            <RecommendationHolder>
+                <RecommendationTitle>RECOMMENDED MOVIES FOR YOU</RecommendationTitle>
+                <RecommendationsWrapper>
+                    {recommendedMovies?.map((content: any) => {
+                        return (
+                            <ContentCard
+                                key={`recommended_${content.id}`}
+                                objectID={content.objectID}
+                                poster={`https://artworks.thetvdb.com${content.image}`}
+                                name={content.name}
+                                overview={' '}
+                                onDetail={() => {
+                                    setView('DETAIL');
+                                    setAssetToLoad({
+                                        type: 'movie',
+                                        id: content.id
+                                    });
+                                }}
+                            />
+                        );
+                    })}
+                </RecommendationsWrapper>
+            </RecommendationHolder>
+        );
+    };
+
+    const renderRecommendedSeries = () => {
+        if (!recommendedSeries.length) return;
+        return (
+            <RecommendationHolder>
+                <RecommendationTitle>RECOMMENDED SERIES FOR YOU</RecommendationTitle>
+                <RecommendationsWrapper>
+                    {recommendedSeries?.map((content: any) => {
+                        return (
+                            <ContentCard
+                                key={`recommended_${content.id}`}
                                 objectID={content.objectID}
                                 poster={content.image}
                                 name={content.name}
@@ -265,6 +395,8 @@ const Recommendations = () => {
 
     return (
         <SearchPageWrapper>
+            {view === 'SEARCH' && renderRecommendedMovies()}
+            {view === 'SEARCH' && renderRecommendedSeries()}
             {view === 'SEARCH' && renderTopMovies()}
             {view === 'SEARCH' && renderTopSeries()}
             {view === 'DETAIL' && renderDetailView()}

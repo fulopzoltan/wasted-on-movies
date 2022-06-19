@@ -1,7 +1,7 @@
 import React from 'react';
 import Login from './Login/Login';
 import firebase from 'firebase/compat';
-import { firebaseConfig } from '../utils/firebase.config';
+import { firebaseConfig } from '../api/firebase.config';
 import Routes from './Routes';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Loading from './Loading/Loading';

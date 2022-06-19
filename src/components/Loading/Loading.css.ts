@@ -7,7 +7,7 @@ export const LoadingWrapper = styled.div`
     left: 0;
     bottom: 0;
     right: 0;
-    z-index: 99;
+    z-index: 9999;
     background-color: ${theme.background.main};
     opacity: 0.6;
     cursor: progress;
@@ -17,6 +17,7 @@ export const LoadingWrapper = styled.div`
 
     .loading-circle-1,
     .loading-circle-2 {
+        z-index: 99999;
         position: absolute;
         content: ' ';
         width: 50px;
