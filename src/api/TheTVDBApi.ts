@@ -84,10 +84,10 @@ class TheTVDBApi {
     private limitData(data: any[], limit: number) {
         return data.slice(0, limit);
     }
-    async getImageByUrl(imageUrl: string) {
+    async getGenres() {
         return new Promise<TVDBApiResponse>((resolve, reject) => {
             this.client
-                .get(imageUrl)
+                .get('/genres')
                 .then((result: AxiosResponse<TVDBApiResponse | any>) => {
                     return resolve(result.data);
                 })
@@ -116,6 +116,35 @@ class TheTVDBApi {
                 .get('/series/filter', { params: { country: 'usa', lang: 'eng', year: year, sort: 'score' } })
                 .then((result: AxiosResponse<TVDBApiResponse | any>) => {
                     result.data.data = this.limitData(result.data.data, 10);
+                    return resolve(result.data);
+                })
+                .catch((e) => {
+                    return reject(e);
+                });
+        });
+    }
+
+    async recommendedMoviesByGenre(genreId: string, idsToFilterOut: string[], amount: number) {
+        return new Promise<TVDBApiResponse>((resolve, reject) => {
+            this.client
+                .get('/movies/filter', { params: { country: 'usa', lang: 'eng', sort: 'score', genre: genreId } })
+                .then((result: AxiosResponse<TVDBApiResponse | any>) => {
+                    result.data.data = result.data.data.filter((entry: any) => !idsToFilterOut.includes(`${entry.id}`));
+                    result.data.data = result.data.data = this.limitData(result.data.data, amount);
+                    return resolve(result.data);
+                })
+                .catch((e) => {
+                    return reject(e);
+                });
+        });
+    }
+    async recommendedSeriesByGenre(genreId: string, idsToFilterOut: string[], amount: number) {
+        return new Promise<TVDBApiResponse>((resolve, reject) => {
+            this.client
+                .get('/series/filter', { params: { country: 'usa', lang: 'eng', sort: 'score', genre: genreId } })
+                .then((result: AxiosResponse<TVDBApiResponse | any>) => {
+                    result.data.data = result.data.data.filter((entry: any) => !idsToFilterOut.includes(`${entry.id}`));
+                    result.data.data = result.data.data = this.limitData(result.data.data, amount);
                     return resolve(result.data);
                 })
                 .catch((e) => {
