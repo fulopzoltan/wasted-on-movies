@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { AnalyticsWrapper, ChartTitle, ChartWrapper, WatchtimesHolder } from './Analytics.css';
 import {
+    AVG_TIME_TO_READ_A_BOOK,
+    AVG_TIME_TO_RUN_A_KM,
     calculateCalendarForWatchedEntries,
     calculateGenresAggregate,
     calculateLikeDislike,
@@ -71,28 +73,46 @@ const Analytics = () => {
         const hours = Math.round((minutes / 60) * 10) / 10;
         const days = Math.round((hours / 24) * 10) / 10;
         return (
-            <WatchtimesHolder>
-                <Watchtime>{`Total`}</Watchtime>
-                <ArrowCircleRight />
-                <Watchtime>
-                    {`${minutes}`}
-                    <br />
-                    <span>minutes</span>
-                </Watchtime>
+            <>
+                <WatchtimesHolder>
+                    <Watchtime>{`Total`}</Watchtime>
+                    <ArrowCircleRight />
+                    <Watchtime>
+                        {`${minutes}`}
+                        <br />
+                        <span>minutes</span>
+                    </Watchtime>
 
-                <ArrowCircleRight />
-                <Watchtime>
-                    {`${hours}`}
-                    <br />
-                    <span>hours</span>
-                </Watchtime>
-                <ArrowCircleRight />
-                <Watchtime>
-                    {`${days}`}
-                    <br />
-                    <span>days</span>
-                </Watchtime>
-            </WatchtimesHolder>
+                    <ArrowCircleRight />
+                    <Watchtime>
+                        {`${hours}`}
+                        <br />
+                        <span>hours</span>
+                    </Watchtime>
+                    <ArrowCircleRight />
+                    <Watchtime>
+                        {`${days}`}
+                        <br />
+                        <span>days</span>
+                    </Watchtime>
+                </WatchtimesHolder>
+                <WatchtimesHolder>
+                    <Watchtime>{`Equivalent of`}</Watchtime>
+                    <ArrowCircleRight />
+                    <Watchtime>
+                        {`${Math.round(minutes / AVG_TIME_TO_READ_A_BOOK)}`}
+                        <br />
+                        <span>books read</span>
+                    </Watchtime>
+
+                    <ArrowCircleRight />
+                    <Watchtime>
+                        {`${Math.round(minutes / AVG_TIME_TO_RUN_A_KM)}`}
+                        <br />
+                        <span>kilometers ran</span>
+                    </Watchtime>
+                </WatchtimesHolder>
+            </>
         );
     };
     if (!watchlist?.length) {

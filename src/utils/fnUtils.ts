@@ -1,8 +1,8 @@
 import { AssetEntry } from '../types/AssetEntry';
 import { theme } from './theme';
 
-const AVG_TIME_TO_READ_A_BOOK = 498;
-const AVG_TIME_TO_RUN_A_KM = 7;
+export const AVG_TIME_TO_READ_A_BOOK = 498;
+export const AVG_TIME_TO_RUN_A_KM = 7;
 
 export const calculateRuntimeForAssetEntry = (entry: AssetEntry) => {
     if (entry.type === 'movie') return entry.watched ? entry.runtime : 0;
@@ -94,15 +94,17 @@ export const getTodayDateString = () => {
 
 export const getTop5GenresWithWeights = (entries: AssetEntry[], expectedSum: number) => {
     const genresAggregate: any = {};
-    entries.forEach((entry) =>
+    entries.forEach((entry) => {
+        // only takes those entries into consideration that are liked
+        if (entry.rating !== 'LIKE') return;
         entry.genres.forEach((genre: any) => {
             if (!genresAggregate[genre.name]) {
                 genresAggregate[genre.name] = 1;
             } else {
                 genresAggregate[genre.name]++;
             }
-        })
-    );
+        });
+    });
     const top5Genres: any = {};
     Object.keys(genresAggregate)
         .sort((a, b) => genresAggregate[b] - genresAggregate[a])

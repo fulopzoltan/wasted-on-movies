@@ -21,7 +21,7 @@ import TheTVDBApi from '../../api/TheTVDBApi';
 import { useLoading } from '../../providers/LoadingContext';
 import ContentCard from '../ContentCard/ContentCard';
 import { AddTask, Bookmark, BookmarkAdd, BookmarkAdded, Search } from '@mui/icons-material';
-import { ArrowBackIos } from '@material-ui/icons';
+import { ArrowBackIos, Theaters } from '@material-ui/icons';
 import { theme } from '../../utils/theme';
 import { AssetEntry } from '../../types/AssetEntry';
 import FirebaseAPI from '../../api/FirebaseAPI';
@@ -182,6 +182,7 @@ const SearchPage = () => {
             assetToView?.translations?.overviewTranslations?.find((o: any) => o.language === 'eng').overview ||
             '[no-data]';
         const genres = assetToView.genres.map((genre: any) => genre.name);
+        const trailer = assetToView?.trailers?.find((trailer: any) => trailer.url);
         return (
             <DetailViewWrapper>
                 <section style={{ position: 'relative', paddingLeft: '30px' }}>
@@ -217,6 +218,14 @@ const SearchPage = () => {
                             startIcon={addedIds.includes(`${assetToLoad.id}`) ? <BookmarkAdded /> : <BookmarkAdd />}
                             onClick={() => addToWatchlist()}
                         />
+                        {trailer && (
+                            <WOMButton
+                                startIcon={<Theaters />}
+                                kind={'DEFAULT'}
+                                text={'Watch Trailer'}
+                                onClick={() => window.open(trailer.url, '_blank')}
+                            />
+                        )}
                     </RightSection>
                 </section>
                 {assetToLoad.type === 'series' && (
